@@ -119,8 +119,76 @@
 
                 @if($deptStudents->isNotEmpty())
 
-                <!-- Student Table -->
-                <div class="overflow-x-auto">
+                <!-- Mobile Card View -->
+                <div class="block md:hidden space-y-4">
+                    @foreach($deptStudents as $student)
+                    <div class="bg-white rounded-xl border border-slate-200 p-4 shadow-sm">
+                        <div class="flex items-start justify-between mb-3">
+                            <div class="flex items-center gap-3">
+                                <div class="flex-shrink-0 w-12 h-12">
+                                    <div class="w-12 h-12 bg-blue-500 rounded-full flex items-center justify-center">
+                                        <span class="text-sm font-medium text-white">
+                                            {{ substr($student->first_name ?? 'U', 0, 1) }}
+                                        </span>
+                                    </div>
+                                </div>
+                                <div>
+                                    <h3 class="font-semibold text-slate-900 text-base">
+                                        {{ trim(($student->first_name ?? '') . ' ' . ($student->last_name ?? '')) }}
+                                    </h3>
+                                    <p class="text-sm text-slate-600">{{ $student->email ?? 'N/A' }}</p>
+                                </div>
+                            </div>
+                            @if($student->is_approved)
+                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                                    Approved
+                                </span>
+                            @elseif($student->termination_at && now()->lt($student->termination_at))
+                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">
+                                    Rejected
+                                </span>
+                            @else
+                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">
+                                    Pending
+                                </span>
+                            @endif
+                        </div>
+
+                        <div class="grid grid-cols-2 gap-4 text-sm mb-4">
+                            <div>
+                                <p class="text-slate-500 text-xs">Student ID</p>
+                                <p class="font-mono font-semibold text-blue-600">{{ $student->student_number ?? 'N/A' }}</p>
+                            </div>
+                            <div>
+                                <p class="text-slate-500 text-xs">Year Level</p>
+                                <p class="font-medium text-slate-700">{{ $student->year_level ?? 'N/A' }}</p>
+                            </div>
+                        </div>
+
+                        <div class="flex gap-2 flex-wrap">
+                            <a href="{{ route('admin.students.grades', $student) }}" class="text-xs font-medium px-3 py-2 bg-blue-100 text-blue-800 rounded-md hover:bg-blue-200 transition">View Grades</a>
+                            @if(!$student->is_approved && !($student->termination_at && now()->lt($student->termination_at)))
+                                <form action="{{ route('admin.students.approve', $student) }}" method="POST" class="inline">
+                                    @csrf
+                                    @method('PATCH')
+                                    <button type="submit" class="inline-flex items-center px-3 py-2 border border-transparent text-xs font-medium rounded-md text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 transition duration-150">
+                                        Approve
+                                    </button>
+                                </form>
+                                <button type="button" onclick="openRejectModal({{ $student->id }})"
+                                    class="inline-flex items-center px-3 py-2 border border-transparent text-xs font-medium rounded-md text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 transition duration-150">
+                                    Reject
+                                </button>
+                            @else
+                                <span class="text-slate-400 text-xs">No actions available</span>
+                            @endif
+                        </div>
+                    </div>
+                    @endforeach
+                </div>
+
+                <!-- Desktop Student Table -->
+                <div class="hidden md:block overflow-x-auto">
                     <table class="w-full">
                         <thead class="bg-slate-50 border-b border-slate-200">
                             <tr>
@@ -230,7 +298,83 @@
                 <p class="text-sm text-slate-600 mt-1">{{ $titleDepartment }} Department</p>
             </div>
 
-            <div class="overflow-x-auto">
+            <!-- Mobile Card View -->
+            <div class="block md:hidden p-4 space-y-4">
+                @foreach($students as $student)
+                <div class="bg-white rounded-xl border border-slate-200 p-4 shadow-sm">
+                    <div class="flex items-start justify-between mb-3">
+                        <div class="flex items-center gap-3">
+                            <div class="flex-shrink-0 w-12 h-12">
+                                <div class="w-12 h-12 bg-blue-500 rounded-full flex items-center justify-center">
+                                    <span class="text-sm font-medium text-white">
+                                        {{ substr($student->first_name ?? 'U', 0, 1) }}
+                                    </span>
+                                </div>
+                            </div>
+                            <div>
+                                <h3 class="font-semibold text-slate-900 text-base">
+                                    {{ trim(($student->first_name ?? '') . ' ' . ($student->last_name ?? '')) }}
+                                </h3>
+                                <p class="text-sm text-slate-600">{{ $student->email ?? 'N/A' }}</p>
+                            </div>
+                        </div>
+                        @if($student->is_approved)
+                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                                Approved
+                            </span>
+                        @elseif($student->termination_at && now()->lt($student->termination_at))
+                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">
+                                Rejected
+                            </span>
+                        @else
+                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">
+                                Pending
+                            </span>
+                        @endif
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-4 text-sm mb-4">
+                        <div>
+                            <p class="text-slate-500 text-xs">Student ID</p>
+                            <p class="font-mono font-semibold text-blue-600">{{ $student->student_number ?? 'N/A' }}</p>
+                        </div>
+                        <div>
+                            <p class="text-slate-500 text-xs">Program</p>
+                            <p class="font-medium text-slate-700">{{ $student->course ?? 'N/A' }}</p>
+                        </div>
+                        <div>
+                            <p class="text-slate-500 text-xs">Year Level</p>
+                            <p class="font-medium text-slate-700">{{ $student->year_level ?? 'N/A' }}</p>
+                        </div>
+                        <div>
+                            <p class="text-slate-500 text-xs">Email</p>
+                            <p class="font-medium text-slate-700">{{ $student->email ?? 'N/A' }}</p>
+                        </div>
+                    </div>
+
+                    <div class="flex gap-2 flex-wrap">
+                        @if(!$student->is_approved && !($student->termination_at && now()->lt($student->termination_at)))
+                            <form action="{{ route('admin.students.approve', $student) }}" method="POST" class="flex-1">
+                                @csrf
+                                @method('PATCH')
+                                <button type="submit" class="w-full inline-flex items-center justify-center px-3 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 transition duration-150">
+                                    Approve
+                                </button>
+                            </form>
+                            <button type="button" onclick="openRejectModal({{ $student->id }})"
+                                class="flex-1 inline-flex items-center justify-center px-3 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 transition duration-150">
+                                Reject
+                            </button>
+                        @else
+                            <span class="text-slate-400 text-sm">No actions available</span>
+                        @endif
+                    </div>
+                </div>
+                @endforeach
+            </div>
+
+            <!-- Desktop Table View -->
+            <div class="hidden md:block overflow-x-auto">
                 <table class="w-full">
                     <thead class="bg-slate-100 border-b border-slate-200">
                         <tr>

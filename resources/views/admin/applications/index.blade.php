@@ -97,8 +97,115 @@
 
                 @if($deptApplications->isNotEmpty())
 
-                <!-- TABLE -->
-                <div class="block bg-white rounded-xl shadow-lg overflow-hidden">
+                <!-- Mobile Card View -->
+                <div class="block md:hidden space-y-4">
+                    @foreach($deptApplications as $app)
+                    <div class="bg-white rounded-xl border border-gray-200 p-4 shadow-sm">
+                        <div class="flex items-start justify-between mb-3">
+                            <div class="flex items-center gap-3">
+                                <div class="w-10 h-10 bg-gradient-to-br from-[#218358] to-[#30a46c] text-white rounded-full flex items-center justify-center font-bold text-sm">
+                                    {{ substr($app->student ? $app->student->first_name : 'U', 0, 1) }}
+                                </div>
+                                <div>
+                                    <h3 class="font-semibold text-gray-900 text-sm">
+                                        {{ $app->student ? $app->student->first_name . ' ' . $app->student->last_name : 'N/A' }}
+                                    </h3>
+                                    <p class="text-xs text-gray-500">{{ $app->student ? $app->student->email : 'N/A' }}</p>
+                                </div>
+                            </div>
+                            <span class="px-2 py-1 rounded-full text-xs font-bold
+                                {{ $app->status === 'pending' ? 'bg-yellow-100 text-yellow-800'
+                                : ($app->status === 'approved' ? 'bg-green-100 text-green-800'
+                                : ($app->status === 'screening' ? 'bg-blue-100 text-blue-800'
+                                : 'bg-red-100 text-red-800')) }}">
+                                {{ ucfirst($app->status) }}
+                            </span>
+                        </div>
+
+                        <div class="grid grid-cols-2 gap-4 text-sm mb-3">
+                            <div>
+                                <p class="text-gray-500 text-xs">Scholarship</p>
+                                <p class="font-medium text-gray-700">{{ $app->scholarship_name ?? 'N/A' }}</p>
+                            </div>
+                            <div>
+                                <p class="text-gray-500 text-xs">Submitted</p>
+                                <p class="font-medium text-gray-700">{{ $app->created_at->format('M d, Y') }}</p>
+                            </div>
+                            <div>
+                                <p class="text-gray-500 text-xs">Screening Date</p>
+                                <p class="font-medium text-gray-700">
+                                    @if($app->screening_at)
+                                        {{ $app->screening_at->format('M d, Y') }}
+                                    @else
+                                        <span class="text-gray-400">-</span>
+                                    @endif
+                                </p>
+                            </div>
+                            <div>
+                                <p class="text-gray-500 text-xs">Documents</p>
+                                <p class="font-medium text-gray-700">
+                                    @if($app->scholastic_record)
+                                        <span class="text-green-600">✓ Available</span>
+                                    @else
+                                        <span class="text-gray-400">No documents</span>
+                                    @endif
+                                </p>
+                            </div>
+                        </div>
+
+                        @if($app->scholastic_record)
+                        <div class="flex gap-2 mb-3 flex-wrap">
+                            <a href="{{ asset('storage/' . $app->scholastic_record) }}" download
+                               class="bg-[#218358] text-white px-3 py-2 rounded text-xs flex-1 text-center">📄 Record</a>
+                            <a href="{{ route('admin.applications.pdf', $app->id) }}" download
+                               class="bg-purple-600 text-white px-3 py-2 rounded text-xs flex-1 text-center">📋 Letter</a>
+                        </div>
+                        @endif
+
+                        @if($app->status === 'pending')
+                            <div class="flex gap-2 flex-wrap">
+                                <form action="{{ route('admin.applications.screening', $app) }}" method="POST" class="flex-1">
+                                    @csrf
+                                    @method('PATCH')
+                                    <button class="w-full bg-blue-600 hover:bg-blue-700 text-white px-3 py-2 rounded text-sm transition">
+                                        🔍 Screening
+                                    </button>
+                                </form>
+                                <form action="{{ route('admin.applications.approve', $app) }}" method="POST" class="flex-1">
+                                    @csrf
+                                    @method('PATCH')
+                                    <button class="w-full bg-green-600 hover:bg-green-700 text-white px-3 py-2 rounded text-sm transition">
+                                        ✓ Approve
+                                    </button>
+                                </form>
+                                <button onclick="openRejectModal({{ $app->id }})"
+                                    class="flex-1 bg-red-600 hover:bg-red-700 text-white px-3 py-2 rounded text-sm transition">
+                                    ✕ Reject
+                                </button>
+                            </div>
+                        @elseif($app->status === 'screening')
+                            <div class="flex gap-2 flex-wrap">
+                                <form action="{{ route('admin.applications.approve', $app) }}" method="POST" class="flex-1">
+                                    @csrf
+                                    @method('PATCH')
+                                    <button class="w-full bg-green-600 hover:bg-green-700 text-white px-3 py-2 rounded text-sm transition">
+                                        ✓ Approve
+                                    </button>
+                                </form>
+                                <button onclick="openRejectModal({{ $app->id }})"
+                                    class="flex-1 bg-red-600 hover:bg-red-700 text-white px-3 py-2 rounded text-sm transition">
+                                    ✕ Reject
+                                </button>
+                            </div>
+                        @else
+                            <p class="text-gray-400 text-xs text-center">No actions available</p>
+                        @endif
+                    </div>
+                    @endforeach
+                </div>
+
+                <!-- Desktop TABLE -->
+                <div class="hidden md:block bg-white rounded-xl shadow-lg overflow-hidden">
                     <div class="overflow-x-auto">
 
                         <table class="w-full">

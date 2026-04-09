@@ -49,7 +49,38 @@
                         </summary>
 
                         <div class="px-6 pb-6">
-                            <div class="overflow-x-auto rounded-3xl border border-[#e7efe5] shadow-sm bg-white">
+                            <!-- Mobile Card View -->
+                            <div class="block md:hidden space-y-4">
+                                @foreach($subjects as $subject)
+                                    @php
+                                        $key = strtolower(trim($subject->course_title));
+                                        $grade = $gradeMap[$key] ?? null;
+                                        $statusLabel = $grade ? ($grade->grade <= 1.5 ? 'Excellent' : ($grade->grade <= 2.5 ? 'Good' : ($grade->grade <= 3.0 ? 'Passing' : 'Needs Review'))) : 'Pending';
+                                        $statusClasses = $grade
+                                            ? ($grade->grade <= 1.5 ? 'bg-green-100 text-green-800' : ($grade->grade <= 2.5 ? 'bg-blue-100 text-blue-800' : ($grade->grade <= 3.0 ? 'bg-yellow-100 text-yellow-800' : 'bg-red-100 text-red-800')))
+                                            : 'bg-gray-100 text-gray-700';
+                                    @endphp
+                                    <div class="bg-white rounded-xl border border-[#e7efe5] p-4 shadow-sm">
+                                        <div class="flex justify-between items-start mb-3">
+                                            <h3 class="font-semibold text-gray-800 text-sm">{{ $subject->course_title }}</h3>
+                                            <span class="inline-flex rounded-full px-2 py-1 text-xs font-semibold {{ $statusClasses }}">{{ $statusLabel }}</span>
+                                        </div>
+                                        <div class="grid grid-cols-2 gap-4 text-sm">
+                                            <div>
+                                                <p class="text-gray-500">Grade</p>
+                                                <p class="font-semibold text-[#1f6a44]">{{ $grade ? number_format($grade->grade, 2) : '-' }}</p>
+                                            </div>
+                                            <div>
+                                                <p class="text-gray-500">School Year</p>
+                                                <p class="font-medium text-gray-700">{{ $grade->school_year ?? 'N/A' }}</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                @endforeach
+                            </div>
+
+                            <!-- Desktop Table View -->
+                            <div class="hidden md:block overflow-x-auto rounded-3xl border border-[#e7efe5] shadow-sm bg-white">
                                 <table class="min-w-full text-left text-sm text-gray-600 rounded-3xl overflow-hidden">
                                     <thead class="bg-[#f7faf7] text-xs uppercase tracking-wider text-gray-500">
                                         <tr>
