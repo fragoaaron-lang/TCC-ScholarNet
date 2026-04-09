@@ -17,7 +17,13 @@
             ['name' => 'Dashboard', 'route' => 'admin.dashboard', 'active' => 'admin.dashboard'],
             ['name' => 'Grade Encoder', 'route' => 'admin.grades.index', 'active' => 'admin.grades.*'],
             ['name' => 'Announcements', 'route' => 'admin.announcements.index', 'active' => 'admin.announcements.*'],
-            ['name' => 'Applicants', 'route' => 'admin.applications.index', 'active' => 'admin.applications.*']
+            ['name' => 'Applicants', 'route' => 'admin.applications.index', 'active' => 'admin.applications.*'],
+            ['name' => 'Students', 'route' => 'admin.students.index', 'active' => 'admin.students.*'],
+            ...($user->department ? [['name' => 'Semestral Report', 'route' => 'admin.reports.show', 'params' => ['department' => $user->department], 'active' => 'admin.reports.show']] : []),
+            ...($user->department === null ? [
+                ['name' => 'Report', 'route' => 'admin.reports.index', 'active' => 'admin.reports.index'],
+                ['name' => 'Secretaries', 'route' => 'admin.secretaries.index', 'active' => 'admin.secretaries.*']
+            ] : [])
           ]
         : [
             ['name' => 'Dashboard', 'route' => 'student.dashboard', 'active' => 'dashboard'],
@@ -25,7 +31,7 @@
         ];
 @endphp
 
-<nav x-data="{ open: false }" class="bg-white border-b border-[#c4e8d1] shadow-md">
+<nav x-data="{ open: false }" class="sticky top-0 z-50 bg-white border-b border-[#c4e8d1] shadow-md">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="flex justify-between h-16">
 
@@ -41,12 +47,21 @@
                 {{-- Desktop Links --}}
                 <div class="hidden sm:flex space-x-8">
                     @foreach($links as $link)
-                        <x-nav-link
-                            :href="route($link['route'])"
-                            :active="request()->routeIs($link['active'])"
-                            class="{{ $navLinkClasses }}">
-                            {{ $link['name'] }}
-                        </x-nav-link>
+                        @if(isset($link['params']))
+                            <x-nav-link
+                                :href="route($link['route'], $link['params'])"
+                                :active="request()->routeIs($link['active'])"
+                                class="{{ $navLinkClasses }}">
+                                {{ $link['name'] }}
+                            </x-nav-link>
+                        @else
+                            <x-nav-link
+                                :href="route($link['route'])"
+                                :active="request()->routeIs($link['active'])"
+                                class="{{ $navLinkClasses }}">
+                                {{ $link['name'] }}
+                            </x-nav-link>
+                        @endif
                     @endforeach
                 </div>
             </div>
@@ -64,7 +79,7 @@
                     </x-slot>
 
                     <x-slot name="content">
-                        <x-dropdown-link :href="route('profile.edit')" class="{{ $navLinkClasses }}">Profile</x-dropdown-link>
+                        <x-dropdown-link :href="route('admin.profile.edit')" class="{{ $navLinkClasses }}">Profile</x-dropdown-link>
                         <form method="POST" action="{{ $role === 'admin' ? route('admin.logout') : route('logout') }}">
                             @csrf
                             <x-dropdown-link
@@ -95,12 +110,21 @@
     <div :class="{'block': open, 'hidden': !open}" class="hidden sm:hidden bg-white border-t border-[#c4e8d1]">
         <div class="pt-2 pb-3 space-y-1">
             @foreach($links as $link)
-                <x-responsive-nav-link
-                    :href="route($link['route'])"
-                    :active="request()->routeIs($link['active'])"
-                    class="{{ $navLinkClasses }}">
-                    {{ $link['name'] }}
-                </x-responsive-nav-link>
+                @if(isset($link['params']))
+                    <x-responsive-nav-link
+                        :href="route($link['route'], $link['params'])"
+                        :active="request()->routeIs($link['active'])"
+                        class="{{ $navLinkClasses }}">
+                        {{ $link['name'] }}
+                    </x-responsive-nav-link>
+                @else
+                    <x-responsive-nav-link
+                        :href="route($link['route'])"
+                        :active="request()->routeIs($link['active'])"
+                        class="{{ $navLinkClasses }}">
+                        {{ $link['name'] }}
+                    </x-responsive-nav-link>
+                @endif
             @endforeach
         </div>
 
@@ -111,7 +135,7 @@
             </div>
 
             <div class="mt-3 space-y-1">
-                <x-responsive-nav-link :href="route('profile.edit')" class="{{ $navLinkClasses }}">Profile</x-responsive-nav-link>
+                <x-responsive-nav-link :href="route('admin.profile.edit')" class="{{ $navLinkClasses }}">Profile</x-responsive-nav-link>
                 <form method="POST" action="{{ $role === 'admin' ? route('admin.logout') : route('logout') }}">
                     @csrf
                     <x-responsive-nav-link

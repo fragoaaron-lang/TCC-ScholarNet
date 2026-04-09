@@ -16,7 +16,11 @@
 </head>
 <body class="font-sans antialiased bg-gray-100">
 
-    @include('layouts.navigation') <!-- your nav bar -->
+    @if(Auth::guard('admin')->check())
+        @include('layouts.adminnavigation')
+    @else
+        @include('layouts.navigation')
+    @endif
 
     <div class="min-h-screen py-6">
         <main class="max-w-7xl mx-auto sm:px-6 lg:px-8">

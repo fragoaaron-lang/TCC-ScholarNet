@@ -40,6 +40,14 @@
                             class="text-[#202020] hover:text-[#30a46c] hover:bg-[#c4e8d1]/20 rounded-md transition px-3 py-2">
                             Dashboard
                         </x-nav-link>
+                        <x-nav-link :href="route('requirements.index')"
+                            class="text-[#202020] hover:text-[#30a46c] hover:bg-[#c4e8d1]/20 rounded-md transition px-3 py-2">
+                            Scholarship
+                        </x-nav-link>
+                        <x-nav-link :href="route('student.grades')" :active="request()->routeIs('student.grades')"
+                            class="text-[#202020] hover:text-[#30a46c] hover:bg-[#c4e8d1]/20 rounded-md transition px-3 py-2">
+                            Grades
+                        </x-nav-link>
                     @endif
                 </div>
             </div>
@@ -47,19 +55,32 @@
             {{-- Right: Username + Dropdown --}}
             <div class="hidden sm:flex sm:items-center sm:ml-6">
                 @if($user)
-                <div class="flex items-center space-x-3">
-                    {{-- Username + Badge --}}
-                    <div class="px-3 py-1 bg-[#c4e8d1]/30 rounded-full flex items-center space-x-2">
-                        <span class="font-medium text-[#202020]">{{ $user->name }}</span>
-                        <span class="text-white px-2 py-0.5 text-xs rounded-full font-semibold {{ $user->role === 'admin' ? 'bg-[#30a46c]' : 'bg-[#8eceaa]' }}">
-                            {{ ucfirst($user->role) }}
-                        </span>
+                <div class="flex items-center space-x-4">
+                    {{-- User Info Card --}}
+                    @php
+                        $fullName = trim(($user->first_name ?? '') . ' ' . ($user->last_name ?? ''));
+                        $displayName = $fullName ?: ($user->name ?? 'User');
+                    @endphp
+                    <div class="flex items-center space-x-3 px-4 py-2 bg-gradient-to-r from-[#c4e8d1]/40 to-[#8eceaa]/20 rounded-lg border border-[#c4e8d1]/50">
+                        <div class="flex-shrink-0 w-10 h-10 bg-gradient-to-br from-[#30a46c] to-[#218358] rounded-full flex items-center justify-center text-white font-bold overflow-hidden">
+                            @if($user->profile_photo)
+                                <img src="{{ asset('storage/' . $user->profile_photo) }}" alt="{{ $displayName }}" class="w-full h-full object-cover">
+                            @else
+                                {{ substr($displayName, 0, 1) }}
+                            @endif
+                        </div>
+                        <div class="flex flex-col">
+                            <span class="font-semibold text-[#202020] text-sm">{{ $displayName }}</span>
+                            @if($user->role !== 'admin' && $user->student_number)
+                                <span class="text-xs text-[#30a46c] font-medium">{{ $user->student_number }}</span>
+                            @endif
+                        </div>
                     </div>
 
                     {{-- Dropdown --}}
                     <x-dropdown align="right" width="48">
                         <x-slot name="trigger">
-                            <button class="inline-flex items-center px-2 py-1 border border-transparent text-sm font-medium rounded-md text-[#202020] bg-[#fbfefc] hover:text-[#30a46c] hover:bg-[#c4e8d1]/20 focus:outline-none focus:ring focus:ring-[#30a46c]/50 transition">
+                            <button class="inline-flex items-center px-3 py-2 border border-[#c4e8d1] text-sm font-medium rounded-lg text-[#30a46c] bg-[#fbfefc] hover:bg-[#c4e8d1]/20 focus:outline-none focus:ring-2 focus:ring-[#30a46c]/50 transition">
                                 <svg class="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
                                     <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" />
                                 </svg>
@@ -67,7 +88,10 @@
                         </x-slot>
 
                         <x-slot name="content">
-                            <x-dropdown-link :href="route('profile.edit')" class="text-[#202020] hover:text-[#30a46c] hover:bg-[#c4e8d1]/20 rounded-md transition px-3 py-2">
+                            @php
+                                $profileRoute = ($user && $user->role === 'admin') ? route('admin.profile.edit') : route('profile.edit');
+                            @endphp
+                            <x-dropdown-link :href="$profileRoute" class="text-[#202020] hover:text-[#30a46c] hover:bg-[#c4e8d1]/20 rounded-md transition px-3 py-2">
                                 Profile
                             </x-dropdown-link>
                             <form method="POST" action="{{ route('logout') }}">
@@ -98,17 +122,38 @@
     {{-- Responsive Menu --}}
     <div :class="{'block': open, 'hidden': !open}" class="hidden sm:hidden bg-[#fbfefc] border-t border-[#c4e8d1]">
         @if($user)
-        <div class="pt-4 pb-1 border-t border-[#c4e8d1] px-4">
-            <div class="font-medium text-base text-[#202020]">{{ $user->name }}</div>
-            <div class="font-medium text-sm text-gray-500">{{ $user->email }}</div>
-            <div class="mt-2 flex space-x-2">
-                <span class="text-white px-2 py-0.5 text-xs rounded-full font-semibold {{ $user->role === 'admin' ? 'bg-[#30a46c]' : 'bg-[#8eceaa]' }}">
-                    {{ ucfirst($user->role) }}
-                </span>
+        <div class="pt-4 pb-3 border-t border-[#c4e8d1] px-4 bg-gradient-to-r from-[#c4e8d1]/20 to-[#8eceaa]/10">
+            @php
+                $fullNameMobile = trim(($user->first_name ?? '') . ' ' . ($user->last_name ?? ''));
+                $displayNameMobile = $fullNameMobile ?: ($user->name ?? 'User');
+            @endphp
+            <div class="flex items-center space-x-3 mb-3">
+                <div class="flex-shrink-0 w-12 h-12 bg-gradient-to-br from-[#30a46c] to-[#218358] rounded-full flex items-center justify-center text-white font-bold overflow-hidden">
+                    @if($user->profile_photo)
+                        <img src="{{ asset('storage/' . $user->profile_photo) }}" alt="{{ $displayNameMobile }}" class="w-full h-full object-cover">
+                    @else
+                        {{ substr($displayNameMobile, 0, 1) }}
+                    @endif
+                </div>
+                <div class="flex flex-col">
+                    <div class="font-bold text-[#202020] text-base">{{ $displayNameMobile }}</div>
+                    @if($user->role !== 'admin' && $user->student_number)
+                        <div class="text-xs text-[#30a46c] font-medium">{{ $user->student_number }}</div>
+                    @endif
+                </div>
             </div>
+            <div class="font-medium text-xs text-gray-500">{{ $user->email }}</div>
         </div>
         <div class="pt-2 pb-3 space-y-1">
-            <x-responsive-nav-link :href="route('profile.edit')" class="text-[#202020] hover:text-[#30a46c] hover:bg-[#c4e8d1]/20 rounded-md transition px-3 py-2">
+            @if($user->role !== 'admin')
+                <x-responsive-nav-link :href="route('requirements.index')" class="text-[#202020] hover:text-[#30a46c] hover:bg-[#c4e8d1]/20 rounded-md transition px-3 py-2">
+                    Scholarship
+                </x-responsive-nav-link>
+            @endif
+            @php
+                $profileRouteMobile = ($user && $user->role === 'admin') ? route('admin.profile.edit') : route('profile.edit');
+            @endphp
+            <x-responsive-nav-link :href="$profileRouteMobile" class="text-[#202020] hover:text-[#30a46c] hover:bg-[#c4e8d1]/20 rounded-md transition px-3 py-2">
                 Profile
             </x-responsive-nav-link>
             <form method="POST" action="{{ route('logout') }}">

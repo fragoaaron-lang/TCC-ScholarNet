@@ -18,8 +18,14 @@ class Requirement extends Model
     'year_level',
     'gpa',
     'plan',
-    'status'
+    'status',
+    'rejection_reason',
+    'screening_at',
 ];
+
+    protected $casts = [
+        'screening_at' => 'datetime',
+    ];
     /**
      * Each requirement belongs to a student (User)
      */

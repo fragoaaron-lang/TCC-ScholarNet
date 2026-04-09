@@ -5,7 +5,7 @@
 </head>
 <body>
     <pre style="font-family: Times New Roman; font-size:14px;">
-{{ $requirement->application_letter }}
+{{ $requirement->plan }}
     </pre>
 </body>
 </html>

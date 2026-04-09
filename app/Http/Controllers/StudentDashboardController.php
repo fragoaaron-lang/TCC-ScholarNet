@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Auth;
 use App\Models\Application;
 use App\Models\Grade;
 use App\Models\Announcement;
+use App\Models\Requirement;
 
 class StudentDashboardController extends Controller
 {
@@ -29,12 +30,47 @@ class StudentDashboardController extends Controller
             ->orderBy('created_at', 'desc')
             ->get();
 
-        // Fetch announcements (global + personal)
-        $announcements = Announcement::where(function($query) use ($user) {
-            $query->whereNull('user_id')          // Global announcements
-                  ->orWhere('user_id', $user->id); // Personal announcements
-        })->orderBy('created_at', 'desc')->get();
+        // Determine the latest semester grade group for this student.
+        $latestGrade = Grade::where('user_id', $user->id)
+            ->orderBy('created_at', 'desc')
+            ->first();
 
-        return view('student.dashboard', compact('applications', 'grades', 'announcements'));
+        $recentSemesterGrades = collect();
+        $recentSemesterLabel = null;
+
+        if ($latestGrade) {
+            $recentSemesterGrades = Grade::where('user_id', $user->id)
+                ->when($latestGrade->semester, function ($query, $semester) {
+                    return $query->where('semester', $semester);
+                })
+                ->when($latestGrade->school_year, function ($query, $schoolYear) {
+                    return $query->where('school_year', $schoolYear);
+                })
+                ->orderBy('subject')
+                ->get();
+
+            $recentSemesterLabel = trim(($latestGrade->semester ?? '') . ' ' . ($latestGrade->school_year ? '• ' . $latestGrade->school_year : ''));
+        }
+
+        // Fetch announcements for students:
+        $announcements = Announcement::forStudents($user->course)
+            ->orderBy('created_at', 'desc')
+            ->get();
+
+        // Check if student has submitted requirements
+        $requirement = Requirement::where('user_id', $user->id)->first();
+        $hasSubmittedRequirements = $requirement !== null;
+        $requirementsProgress = $hasSubmittedRequirements ? 100 : 0;
+
+        return view('student.dashboard', compact(
+            'applications',
+            'grades',
+            'recentSemesterGrades',
+            'recentSemesterLabel',
+            'announcements',
+            'hasSubmittedRequirements',
+            'requirementsProgress',
+            'requirement'
+        ));
     }
 }

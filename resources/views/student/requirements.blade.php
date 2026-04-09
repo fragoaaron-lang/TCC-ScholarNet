@@ -18,7 +18,7 @@
             </label>
             <input type="file"
                    name="scholastic_record"
-                   class="border rounded w-full p-3 focus:ring-2 focus:ring-blue-400"
+                   class="border rounded w-full p-3 focus:ring-2 focus:ring-green-400"
                    required>
         </div>
 
@@ -28,7 +28,7 @@
                 Scholarship Name
             </label>
             <select name="scholarship_name"
-                    class="border rounded w-full p-3 focus:ring-2 focus:ring-blue-400"
+                    class="border rounded w-full p-3 focus:ring-2 focus:ring-green-400"
                     required>
                 <option value="">-- Select Scholarship --</option>
                 <option value="Academic Scholar">Academic Scholar</option>
@@ -55,7 +55,7 @@
                 Year Level
             </label>
             <select name="year_level"
-                    class="border rounded w-full p-3 focus:ring-2 focus:ring-blue-400"
+                    class="border rounded w-full p-3 focus:ring-2 focus:ring-green-400"
                     required>
                 <option value="">-- Select Year Level --</option>
                 <option value="1st Year">1st Year</option>
@@ -73,24 +73,24 @@
             <input type="text"
                    name="gpa"
                    placeholder="Enter your GPA"
-                   class="border rounded w-full p-3 focus:ring-2 focus:ring-blue-400"
+                   class="border rounded w-full p-3 focus:ring-2 focus:ring-green-400"
                    required>
         </div>
 
-        {{-- PLAN (300 WORDS MINIMUM) --}}
+        {{-- PLAN --}}
         <div>
             <label class="block font-medium mb-2">
-                Your Plan with Scholarship (Minimum 300 Words)
+                Your Plan with Scholarship
             </label>
             <textarea name="plan"
                       rows="8"
-                      class="border rounded w-full p-3 focus:ring-2 focus:ring-blue-400"
+                      class="border rounded w-full p-3 focus:ring-2 focus:ring-green-400"
                       placeholder="Explain how this scholarship will help you and your academic goals..."
                       required></textarea>
         </div>
 
         <button type="submit"
-                class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg shadow transition">
+                class="bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-lg shadow transition">
             Submit Requirements
         </button>
     </form>

@@ -20,4 +20,13 @@ class Admin extends Authenticatable
     protected $hidden = [
         'password',
     ];
+
+    /**
+     * Students managed by this admin, matched by department/course.
+     */
+    public function students()
+    {
+        return $this->hasMany(User::class, 'course', 'department')
+            ->where('role', 'student');
+    }
 }

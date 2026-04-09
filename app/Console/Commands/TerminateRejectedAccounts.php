@@ -24,7 +24,18 @@ class TerminateRejectedAccounts extends Command
      * Execute the console command.
      */
     public function handle()
-    {
-        //
+{
+    $now = now();
+
+    $users = User::whereNotNull('termination_at')
+                 ->where('termination_at', '<=', $now)
+                 ->get();
+
+    foreach ($users as $user) {
+        $user->delete(); // or deactivate account
+        Log::info("Terminated user ID {$user->id} due to scholarship rejection.");
     }
+
+    $this->info('Processed terminated accounts.');
+}
 }

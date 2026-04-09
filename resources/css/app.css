@@ -28,7 +28,74 @@ body {
     font-family: 'Poppins', sans-serif;
     background-color: var(--bg-main);
     color: var(--text-main);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
 
+}
+
+/* MOBILE OPTIMIZATIONS */
+@media (max-width: 768px) {
+    body {
+        font-size: 14px;
+        line-height: 1.5;
+    }
+
+    /* Improve touch targets */
+    button, a, input, textarea, select {
+        min-height: 44px;
+        min-width: 44px;
+    }
+
+    /* Better spacing on mobile */
+    .container, .max-w-7xl {
+        padding-left: 1rem;
+        padding-right: 1rem;
+    }
+
+    /* Improve modal on mobile */
+    .modal-mobile {
+        margin: 1rem;
+        max-height: calc(100vh - 2rem);
+        overflow-y: auto;
+    }
+}
+
+/* TABLE MOBILE RESPONSIVENESS */
+@media (max-width: 768px) {
+    table {
+        font-size: 12px;
+    }
+
+    th, td {
+        padding: 8px 4px;
+    }
+
+    /* Hide less important columns on mobile */
+    .mobile-hidden {
+        display: none;
+    }
+}
+
+/* FORM IMPROVEMENTS FOR MOBILE */
+@media (max-width: 768px) {
+    input, textarea, select {
+        font-size: 16px; /* Prevents zoom on iOS */
+        border-radius: 8px;
+    }
+
+    textarea {
+        resize: vertical;
+        min-height: 100px;
+    }
+}
+
+/* CARD RESPONSIVE DESIGN */
+@media (max-width: 768px) {
+    .card-mobile {
+        margin: 0.5rem;
+        border-radius: 12px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
 }
 
 

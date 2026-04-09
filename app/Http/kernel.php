@@ -54,6 +54,9 @@
     'termination.check' => \App\Http\Middleware\CheckTermination::class,
     'check.termination' => \App\Http\Middleware\CheckTermination::class,
 
+    // Approval middleware
+    'check.approval' => \App\Http\Middleware\CheckApproval::class,
+
     // ✅ Role middleware
     'role' => \App\Http\Middleware\CheckRole::class,
 ];

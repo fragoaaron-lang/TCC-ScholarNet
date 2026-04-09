@@ -9,6 +9,7 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Schema;
 use Illuminate\Validation\Rules;
 use Illuminate\View\View;
 use Illuminate\Validation\Rules\Password;
@@ -32,9 +33,11 @@ class RegisteredUserController extends Controller
 {
     $request->validate([
         'first_name' => ['required', 'string', 'max:255'],
-        'middle_name' => ['nullable', 'string', 'max:255'],
+        'middle_name' => ['nullable', 'string', 'max:3', 'regex:/^([A-Za-z]\.?)|N\/A$/i'],
         'last_name' => ['required', 'string', 'max:255'],
         'student_number' => ['required', 'string', 'max:50', 'unique:users'],
+        'course' => ['required', 'string', 'max:255'],
+        'year_level' => ['required', 'string', 'max:255'],
         'email' => [
             'required',
             'string',
@@ -53,23 +56,43 @@ class RegisteredUserController extends Controller
         ],
     ]);
 
-    // Create the user only once
-    $user = User::create([
+    // Normalize middle initial: A. or N/A
+    $middle = trim($request->middle_name ?? '');
+    if (!$middle || strcasecmp($middle, 'N/A') === 0) {
+        $middleInitial = 'N/A';
+    } else {
+        $middleInitial = strtoupper(substr($middle, 0, 1));
+        $middleInitial = rtrim($middleInitial, '.') . '.';
+    }
+
+    // Create the user as a pending student approval (if column exists)
+    $userData = [
         'first_name' => $request->first_name,
-        'middle_name' => $request->middle_name ?? 'N/A',
+        'middle_name' => $middleInitial,
         'last_name' => $request->last_name,
         'student_number' => $request->student_number,
+        'course' => $request->course,
+        'year_level' => $request->year_level,
         'email' => $request->email,
         'password' => Hash::make($request->password),
-    ]);
+        'role' => 'student',
+    ];
+
+    if (Schema::hasColumn('users', 'is_approved')) {
+        $userData['is_approved'] = false;
+    }
+
+    $user = User::create($userData);
 
     // Send email verification
     $user->sendEmailVerificationNotification();
 
     event(new Registered($user));
 
+    // Log in the user
     Auth::login($user);
 
-    return redirect()->route('dashboard');
+    // Redirect to dashboard with pending approval message
+    return redirect()->route('student.dashboard')->with('status', 'Registration successful! Your account is pending admin approval.');
 }
 }

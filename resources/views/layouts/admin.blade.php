@@ -14,13 +14,15 @@
     <!-- Scripts -->
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
-<body class="font-sans antialiased bg-gray-100">
+<body class="font-sans antialiased bg-gray-100 flex flex-col min-h-screen">
 
     @include('layouts.adminnavigation') <!-- your nav bar -->
 
-     <!-- Main content area -->
-    <main class="p-6">
-        @yield('content') <!-- ❌ This must exist -->
+    <!-- Main content area -->
+    <main class="flex-1 bg-gray-50 pt-4">
+        <div class="p-4 md:p-6 lg:p-8">
+            @yield('content')
+        </div>
     </main>
 
 </body>
