@@ -42,6 +42,7 @@ RUN apk add --no-cache \
     libpng-dev \
     libjpeg-turbo-dev \
     freetype-dev \
+    sqlite-dev \
     zip \
     unzip \
     git \
