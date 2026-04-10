@@ -16,10 +16,8 @@ class DatabaseSeeder extends Seeder
    public function run()
 {
     $this->call([
+        SqlImportSeeder::class,
         SubjectSeeder::class,
-        AdminSeeder::class,
-        CurriculumSeeder::class,
-        UserSeeder::class,
     ]);
 }
 
