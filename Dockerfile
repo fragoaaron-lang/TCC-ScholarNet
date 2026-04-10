@@ -28,6 +28,7 @@ RUN composer install \
     --no-dev \
     --no-interaction \
     --no-progress \
+    --no-scripts \
     --optimize-autoloader \
     --prefer-dist
 
@@ -59,6 +60,9 @@ COPY . .
 
 # Copy compiled vendor dependencies from composer stage
 COPY --from=composer-builder /app/vendor ./vendor
+
+# Run post-autoload-dump scripts now that artisan is available
+RUN composer run-script post-autoload-dump --no-interaction
 
 # Copy Vite-built assets from node stage and set correct permissions
 COPY --from=node-builder /app/public/build ./public/build
