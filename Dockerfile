@@ -1,29 +1,88 @@
-# Stage 1 - Build frontend assets
-FROM node:18 AS frontend
+# ============================================================
+# Stage 1: Node.js — build Vite/frontend assets
+# ============================================================
+FROM node:18-alpine AS node-builder
+
 WORKDIR /app
-COPY package*.json ./
-RUN npm install
-COPY . .
+
+# Install Node dependencies
+COPY package.json package-lock.json ./
+RUN npm ci
+
+# Copy frontend source files needed for the build
+COPY vite.config.js tailwind.config.js postcss.config.js ./
+COPY resources/ resources/
+
+# Build assets — outputs to public/build/
 RUN npm run build
 
-# Stage 2 - Backend (Laravel + PHP + Composer)
-FROM php:8.2-fpm AS backend
+# ============================================================
+# Stage 2: Composer — install PHP dependencies
+# ============================================================
+FROM composer:2 AS composer-builder
 
-RUN apt-get update && apt-get install -y \
-    git curl unzip libpq-dev libonig-dev libzip-dev zip \
-    && docker-php-ext-install pdo pdo_mysql mbstring zip \
-    && rm -rf /var/lib/apt/lists/*
+WORKDIR /app
 
-COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
+COPY composer.json composer.lock ./
+RUN composer install \
+    --no-dev \
+    --no-interaction \
+    --no-progress \
+    --optimize-autoloader \
+    --prefer-dist
 
-WORKDIR /var/www
+# ============================================================
+# Stage 3: Production image — FrankenPHP
+# ============================================================
+FROM dunglas/frankenphp:latest-php8.2-alpine
+
+# Install required PHP extensions and system packages
+RUN apk add --no-cache \
+    libpng-dev \
+    libjpeg-turbo-dev \
+    freetype-dev \
+    zip \
+    unzip \
+    git \
+    && docker-php-ext-install \
+        pdo \
+        pdo_mysql \
+        pdo_sqlite \
+        gd \
+        bcmath \
+        opcache
+
+WORKDIR /app
+
+# Copy application source
 COPY . .
-COPY --from=frontend /app/public/build ./public/build
 
-RUN composer install --no-dev --no-interaction --prefer-dist --optimize-autoloader
-RUN php artisan config:clear && \
-    php artisan route:clear && \
-    php artisan view:clear
+# Copy compiled vendor dependencies from composer stage
+COPY --from=composer-builder /app/vendor ./vendor
 
-EXPOSE 10000
-CMD ["sh", "-lc", "php -S 0.0.0.0:${PORT:-10000} -t public public/index.php"]
+# Copy Vite-built assets from node stage and set correct permissions
+COPY --from=node-builder /app/public/build ./public/build
+RUN chmod -R 755 public/build \
+    && ls -la public/build/ \
+    && echo "✓ manifest.json present:" \
+    && cat public/build/manifest.json | head -5
+
+# Set permissions for Laravel writable directories
+RUN mkdir -p storage/framework/{sessions,views,cache} \
+        storage/logs \
+        bootstrap/cache \
+    && chmod -R 775 storage bootstrap/cache \
+    && chown -R www-data:www-data storage bootstrap/cache public/build
+
+# Copy and configure the production .env
+RUN cp .env.example .env \
+    && php artisan key:generate --force
+
+# Cache Laravel config/routes/views for production performance
+RUN php artisan config:cache \
+    && php artisan route:cache \
+    && php artisan view:cache
+
+EXPOSE 8000
+
+CMD ["frankenphp", "php-server", "--listen", "0.0.0.0:8000", "--root", "/app/public"]
