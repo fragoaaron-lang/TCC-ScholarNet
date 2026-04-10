@@ -62,6 +62,12 @@ COPY . .
 # Copy compiled vendor dependencies from composer stage
 COPY --from=composer-builder /app/vendor ./vendor
 
+# Create required Laravel directories before running artisan commands
+RUN mkdir -p storage/framework/{sessions,views,cache} \
+        storage/logs \
+        bootstrap/cache \
+    && chmod -R 775 storage bootstrap/cache
+
 # Run Laravel package discovery (replaces post-autoload-dump)
 RUN php artisan package:discover --ansi
 
@@ -72,12 +78,8 @@ RUN chmod -R 755 public/build \
     && echo "✓ manifest.json present:" \
     && cat public/build/manifest.json | head -5
 
-# Set permissions for Laravel writable directories
-RUN mkdir -p storage/framework/{sessions,views,cache} \
-        storage/logs \
-        bootstrap/cache \
-    && chmod -R 775 storage bootstrap/cache \
-    && chown -R www-data:www-data storage bootstrap/cache public/build
+# Set final permissions for all Laravel writable directories
+RUN chown -R www-data:www-data storage bootstrap/cache public/build
 
 # Copy and configure the production .env
 RUN cp .env.example .env \
