@@ -66,7 +66,7 @@ COPY --from=composer-builder /app/vendor ./vendor
 RUN mkdir -p storage/framework/{sessions,views,cache} \
         storage/logs \
         bootstrap/cache \
-    && chmod -R 775 storage bootstrap/cache
+    && chmod -R 777 storage bootstrap/cache
 
 # Run Laravel package discovery (replaces post-autoload-dump)
 RUN php artisan package:discover --ansi
