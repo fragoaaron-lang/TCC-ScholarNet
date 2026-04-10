@@ -81,14 +81,9 @@ RUN chmod -R 755 public/build \
 # Set final permissions for all Laravel writable directories
 RUN chown -R www-data:www-data storage bootstrap/cache public/build
 
-# Copy and configure the production .env
-RUN cp .env.example .env \
-    && php artisan key:generate --force
-
-# Cache Laravel config/routes for production performance
-# Note: view:cache may fail if custom views don't exist, so only cache config/routes
-RUN php artisan config:cache \
-    && php artisan route:cache
+# Do not generate a build-time .env or cache config during image build.
+# Runtime environment variables from Railway should be used instead.
+RUN php artisan route:cache
 
 EXPOSE 8000
 
