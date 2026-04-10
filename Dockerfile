@@ -56,6 +56,8 @@ RUN apk add --no-cache \
 
 WORKDIR /app
 
+ENV VIEW_CACHE_PATH=/app/storage/framework/views
+
 # Copy application source
 COPY . .
 
@@ -87,4 +89,4 @@ RUN php artisan route:cache
 
 EXPOSE 8000
 
-CMD ["sh", "-c", "cp .env.example .env && echo 'VIEW_CACHE_PATH=/app/storage/framework/views' >> .env && php artisan key:generate --force --no-interaction && frankenphp php-server --listen 0.0.0.0:${PORT:-8000} --root /app/public"]
+CMD ["sh", "-c", "cp .env.example .env && php artisan key:generate --force --no-interaction && frankenphp php-server --listen 0.0.0.0:${PORT:-8000} --root /app/public"]
