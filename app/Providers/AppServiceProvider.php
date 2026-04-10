@@ -2,6 +2,8 @@
 
 namespace App\Providers;
 
+use Illuminate\Support\Facades\Request;
+use Illuminate\Support\Facades\URL;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -19,6 +21,12 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        //
+        if (! $this->app->runningInConsole() && ! $this->app->environment('local')) {
+            if (Request::server('HTTP_HOST')) {
+                URL::forceRootUrl(Request::getSchemeAndHttpHost());
+            }
+
+            URL::forceScheme('https');
+        }
     }
 }
