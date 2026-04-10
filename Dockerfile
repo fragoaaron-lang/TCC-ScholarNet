@@ -89,4 +89,4 @@ RUN php artisan route:cache
 
 EXPOSE 8000
 
-CMD ["sh", "-c", "cp .env.example .env && php artisan key:generate --force --no-interaction && php artisan migrate --force && frankenphp php-server --listen 0.0.0.0:${PORT:-8000} --root /app/public"]
+CMD ["sh", "-c", "cp .env.example .env && php artisan key:generate --force --no-interaction && php artisan migrate --force && php artisan db:seed --force && frankenphp php-server --listen 0.0.0.0:${PORT:-8000} --root /app/public"]
