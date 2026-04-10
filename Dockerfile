@@ -85,10 +85,10 @@ RUN chown -R www-data:www-data storage bootstrap/cache public/build
 RUN cp .env.example .env \
     && php artisan key:generate --force
 
-# Cache Laravel config/routes/views for production performance
+# Cache Laravel config/routes for production performance
+# Note: view:cache may fail if custom views don't exist, so only cache config/routes
 RUN php artisan config:cache \
-    && php artisan route:cache \
-    && php artisan view:cache
+    && php artisan route:cache
 
 EXPOSE 8000
 
