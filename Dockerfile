@@ -87,4 +87,4 @@ RUN php artisan route:cache
 
 EXPOSE 8000
 
-CMD ["frankenphp", "php-server", "--listen", "0.0.0.0:8000", "--root", "/app/public"]
+CMD ["sh", "-c", "frankenphp php-server --listen 0.0.0.0:${PORT:-8000} --root /app/public"]
