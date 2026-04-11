@@ -18,6 +18,7 @@ class DatabaseSeeder extends Seeder
     $this->call([
         SqlImportSeeder::class,
         SubjectSeeder::class,
+        SampleApplicationsSeeder::class,
     ]);
 }
 

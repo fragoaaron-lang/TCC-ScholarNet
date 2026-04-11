@@ -8,12 +8,21 @@ use App\Models\User;
 class Application extends Model
 {
     protected $fillable = [
-        'student_id', 'course_name', 'status'
+        'user_id',
+        'course',
+        'year_level',
+        'status',
+        'admin_id',
+        'scholarship_name',
+        'sponsor',
+        'gpa',
+        'plan',
+        'scholastic_record'
     ];
 
     // Link application to student
     public function student()
     {
-        return $this->belongsTo(User::class, 'student_id');
+        return $this->belongsTo(User::class, 'user_id');
     }
 }

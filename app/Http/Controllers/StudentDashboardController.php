@@ -7,7 +7,6 @@ use Illuminate\Support\Facades\Auth;
 use App\Models\Application;
 use App\Models\Grade;
 use App\Models\Announcement;
-use App\Models\Requirement;
 
 class StudentDashboardController extends Controller
 {
@@ -57,20 +56,12 @@ class StudentDashboardController extends Controller
             ->orderBy('created_at', 'desc')
             ->get();
 
-        // Check if student has submitted requirements
-        $requirement = Requirement::where('user_id', $user->id)->first();
-        $hasSubmittedRequirements = $requirement !== null;
-        $requirementsProgress = $hasSubmittedRequirements ? 100 : 0;
-
         return view('student.dashboard', compact(
             'applications',
             'grades',
             'recentSemesterGrades',
             'recentSemesterLabel',
-            'announcements',
-            'hasSubmittedRequirements',
-            'requirementsProgress',
-            'requirement'
+            'announcements'
         ));
     }
 }

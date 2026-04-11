@@ -39,107 +39,87 @@ $termination = $user->termination_at;
     </div>
 
     <!-- Statistics Cards -->
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-8">
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
 
-        <!-- Requirements Card -->
-        <div class="group bg-white rounded-xl shadow-md hover:shadow-xl transition-all duration-300 overflow-hidden">
-            <div class="bg-gradient-to-br {{ $hasSubmittedRequirements ? 'from-[#218358] to-[#30a46c]' : 'from-gray-400 to-gray-500' }} p-6 text-white">
-                <div class="flex justify-between items-start mb-4">
+        <!-- Unified Scholarship Card -->
+        <div class="bg-white rounded-2xl shadow-md hover:shadow-xl transition-all duration-300 overflow-hidden border border-[#c4e8d1]/30">
+            <div class="bg-gradient-to-br from-[#30a46c] to-[#8eceaa] p-8 text-white">
+                <div class="flex items-center justify-between mb-6">
                     <div>
-                        <p class="text-white/80 font-medium mb-1">Scholarship Requirements</p>
-                        <p class="text-2xl font-bold">
-                            @if($hasSubmittedRequirements)
-                                ✓ Submitted
-                            @else
-                                Not Submitted
-                            @endif
-                        </p>
+                        <h2 class="text-2xl font-bold mb-2">Scholarship Center</h2>
+                        <p class="text-white/90">Manage your requirements and applications</p>
                     </div>
-                    <div class="bg-white/20 p-3 rounded-lg group-hover:scale-110 transition-transform">
-                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2-5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V9a2 2 0 00-2-2z"/>
+                    <div class="w-16 h-16 bg-white/20 rounded-full flex items-center justify-center">
+                        <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/>
                         </svg>
                     </div>
                 </div>
-                <div class="w-full bg-white/20 rounded-full h-2">
-                    <div class="bg-white h-2 rounded-full transition-all duration-300" style="width: {{ $requirementsProgress }}%"></div>
-                </div>
-            </div>
-            <div class="p-6">
-                <p class="text-sm text-gray-600 mb-4">
-                    @if($hasSubmittedRequirements)
-                        Your application is {{ $requirement->status }}. You can edit your submission.
-                    @else
-                        Upload your scholastic records and apply for scholarships
-                    @endif
-                </p>
-                @if($user->is_approved)
-                    <a href="{{ route('requirements.index') }}" class="w-full bg-gradient-to-r from-[#30a46c] to-[#218358] hover:from-[#218358] hover:to-[#0a8335] text-white px-4 py-3 rounded-lg shadow-lg transition-all duration-200 font-semibold text-center block transform hover:scale-[1.02]">
-                        @if($hasSubmittedRequirements)
-                            ✏️ Edit Application
-                        @else
-                            📝 Submit Requirements
+
+                <!-- Status Overview -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <!-- Applications Status -->
+                    <div class="bg-white/15 backdrop-blur-sm rounded-xl p-4 border border-white/20">
+                        <div class="flex items-center gap-3 mb-3">
+                            <div class="w-10 h-10 rounded-full {{ $applications->isNotEmpty() ? 'bg-blue-500' : 'bg-white/30' }} flex items-center justify-center">
+                                <span class="text-lg">{{ $applications->isNotEmpty() ? '📊' : '📋' }}</span>
+                            </div>
+                            <div>
+                                <h3 class="font-semibold">Applications</h3>
+                                <p class="text-sm text-white/80">{{ $applications->count() }} submitted</p>
+                            </div>
+                        </div>
+                        @if($applications->isNotEmpty())
+                            <div class="text-xs text-white/70">Active applications</div>
                         @endif
-                    </a>
-                @else
-                    <div class="w-full bg-gray-200 text-gray-600 px-4 py-3 rounded-lg font-semibold text-center">
-                        ⏳ Pending Admin Approval
                     </div>
-                @endif
-            </div>
-        </div>
 
-        <!-- Applications Card -->
-        <div class="group bg-white rounded-xl shadow-md hover:shadow-xl transition-all duration-300 overflow-hidden">
-            <div class="bg-gradient-to-br from-[#30a46c] to-[#8eceaa] p-6 text-white">
-                <div class="flex justify-between items-start mb-4">
-                    <div>
-                        <p class="text-white/80 font-medium mb-1">Scholarship Applications</p>
-                        <p class="text-2xl font-bold">{{ $applications->count() }}</p>
-                    </div>
-                    <div class="bg-white/20 p-3 rounded-lg group-hover:scale-110 transition-transform">
-                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
-                        </svg>
+                    <!-- Progress Summary -->
+                    <div class="bg-white/15 backdrop-blur-sm rounded-xl p-4 border border-white/20">
+                        <div class="flex items-center gap-3 mb-3">
+                            <div class="w-10 h-10 rounded-full bg-purple-500 flex items-center justify-center">
+                                <span class="text-lg">📈</span>
+                            </div>
+                            <div>
+                                <h3 class="font-semibold">Progress</h3>
+                                <p class="text-sm text-white/80">
+                                    @php
+                                        $totalSteps = 1;
+                                        $completedSteps = $applications->isNotEmpty() ? 1 : 0;
+                                        $progressPercent = $totalSteps > 0 ? round(($completedSteps / $totalSteps) * 100) : 0;
+                                    @endphp
+                                    {{ $progressPercent }}% Complete
+                                </p>
+                            </div>
+                        </div>
+                        <div class="w-full bg-white/20 rounded-full h-2">
+                            <div class="bg-white h-2 rounded-full transition-all duration-500" style="width: {{ $progressPercent }}%"></div>
+                        </div>
                     </div>
                 </div>
-                <p class="text-white/80 text-sm font-medium">
-                    @php
-                        $approved = $applications->where('status', 'approved')->count();
-                        $pending = $applications->where('status', 'pending')->count();
-                    @endphp
-                    {{ $approved }} Approved • {{ $pending }} Pending
-                </p>
             </div>
-            <div class="p-6">
-                <p class="text-sm text-gray-600 mb-4">Track your scholarship applications</p>
-                <a href="#my-applications" class="w-full bg-gradient-to-r from-[#30a46c] to-[#8eceaa] hover:from-[#8eceaa] hover:to-[#30a46c] text-white px-4 py-3 rounded-lg shadow-lg transition-all duration-200 font-semibold text-center block transform hover:scale-[1.02]">
-                    📊 View Applications
-                </a>
-            </div>
-        </div>
 
-        <!-- Profile Card -->
-        <div class="group bg-white rounded-xl shadow-md hover:shadow-xl transition-all duration-300 overflow-hidden">
-            <div class="bg-gradient-to-br from-[#8eceaa] to-[#c4e8d1] p-6 text-[#218358]">
-                <div class="flex justify-between items-start mb-4">
-                    <div>
-                        <p class="text-[#218358]/80 font-medium mb-1">Your Profile</p>
-                        <p class="text-lg font-bold">{{ $user->course ?? 'Not Set' }}</p>
-                    </div>
-                    <div class="bg-[#218358]/10 p-3 rounded-lg group-hover:scale-110 transition-transform">
-                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
-                        </svg>
-                    </div>
+            <!-- Action Buttons -->
+            <div class="p-8 bg-gray-50">
+                <div class="space-y-3">
+                    <h4 class="font-semibold text-gray-900">Scholarship Applications</h4>
+                    <p class="text-sm text-gray-600">
+                        @if($applications->isNotEmpty())
+                            Track your {{ $applications->count() }} scholarship {{ Str::plural('application', $applications->count()) }} below.
+                        @else
+                            Apply for scholarships to get started with your application process.
+                        @endif
+                    </p>
+                    @if($applications->isNotEmpty())
+                        <a href="#applications" class="w-full inline-flex items-center justify-center gap-2 px-6 py-3 bg-[#8eceaa] hover:bg-[#30a46c] text-white font-semibold rounded-lg transition-all duration-200">
+                            📊 View Applications
+                        </a>
+                    @else
+                        <div class="w-full inline-flex items-center justify-center gap-2 px-6 py-3 bg-gray-200 text-gray-500 font-semibold rounded-lg">
+                            📋 No Applications Yet
+                        </div>
+                    @endif
                 </div>
-                <p class="text-[#218358]/70 text-sm">Student Number: <span class="font-semibold">{{ $user->student_number }}</span></p>
-            </div>
-            <div class="p-6">
-                <p class="text-sm text-gray-600 mb-4">Manage your account settings</p>
-                <a href="{{ route('profile.edit') }}" class="w-full bg-gradient-to-r from-[#8eceaa] to-[#c4e8d1] hover:from-[#c4e8d1] hover:to-[#8eceaa] text-[#218358] px-4 py-3 rounded-lg shadow-lg transition-all duration-200 font-semibold text-center block transform hover:scale-[1.02] border-2 border-[#218358]/20">
-                    👤 Edit Profile
-                </a>
             </div>
         </div>
 
@@ -185,59 +165,159 @@ $termination = $user->termination_at;
 
     </div>
 
-    <!-- My Applications Section -->
-    <div id="my-applications" class="bg-white rounded-2xl shadow-md hover:shadow-lg transition-all duration-300 p-8 border border-[#c4e8d1]/30">
-        <h2 class="text-xl font-bold text-[#218358] mb-6">My Scholarship Applications</h2>
-        @if($applications->isEmpty())
-            <div class="text-center py-12">
-                <svg class="w-16 h-16 text-gray-300 mx-auto mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m0 0a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                </svg>
-                <p class="text-gray-500 mb-4">
-                    @if($hasSubmittedRequirements)
-                        Your application is under review. Check back later for updates.
-                    @else
-                        You haven't submitted any scholarship applications yet.
-                    @endif
-                </p>
-                @if(!$hasSubmittedRequirements)
-                    <a href="{{ route('requirements.index') }}" class="inline-block px-6 py-2 bg-[#30a46c] text-white rounded-lg font-semibold hover:bg-[#218358] transition">
-                        Start Applying
-                    </a>
+    <!-- Applications Section -->
+    <div id="applications" class="bg-white rounded-2xl shadow-md hover:shadow-lg transition-all duration-300 overflow-hidden border border-[#c4e8d1]/30">
+        <div class="bg-gradient-to-r from-[#218358] to-[#30a46c] px-8 py-6">
+            <div class="flex items-center justify-between">
+                <div>
+                    <h2 class="text-xl font-bold text-white flex items-center gap-3">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m0 0a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                        </svg>
+                        Your Applications
+                    </h2>
+                    <p class="text-white/90 text-sm mt-1">Track your scholarship application progress</p>
+                </div>
+                @if($applications->isNotEmpty())
+                    <div class="text-right">
+                        <div class="text-2xl font-bold text-white">{{ $applications->count() }}</div>
+                        <div class="text-sm text-white/80">Total</div>
+                    </div>
                 @endif
             </div>
-        @else
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                @foreach($applications as $app)
-                    @php
-                        $statusColor = match($app->status ?? 'pending') {
-                            'approved' => 'bg-green-100 text-green-800 border-green-300',
-                            'rejected' => 'bg-red-100 text-red-800 border-red-300',
-                            default => 'bg-yellow-100 text-yellow-800 border-yellow-300'
-                        };
-                        $statusIcon = match($app->status ?? 'pending') {
-                            'approved' => '✓',
-                            'rejected' => '✕',
-                            default => '◐'
-                        };
-                    @endphp
-                    <div class="p-4 bg-gradient-to-r from-[#c4e8d1]/20 to-transparent rounded-lg border border-[#c4e8d1]/50 hover:border-[#30a46c] transition">
-                        <div class="flex justify-between items-start mb-3">
-                            <div>
-                                <p class="font-semibold text-[#202020]">Application #{{ $app->id }}</p>
-                                <p class="text-xs text-gray-500">{{ $app->created_at->diffForHumans() }}</p>
-                            </div>
-                            <span class="px-3 py-1 text-xs font-bold rounded-full {{ $statusColor }}">
-                                {{ $statusIcon }} {{ ucfirst($app->status ?? 'Pending') }}
-                            </span>
-                        </div>
-                        @if($app->reason_for_rejection)
-                            <p class="text-xs text-red-600 bg-red-50 p-2 rounded mt-2"><strong>Reason:</strong> {{ $app->reason_for_rejection }}</p>
-                        @endif
+        </div>
+
+        <div class="p-8">
+            @if($applications->isEmpty())
+                <div class="text-center py-12">
+                    <div class="w-20 h-20 bg-gradient-to-r from-[#c4e8d1] to-[#8eceaa] rounded-full flex items-center justify-center mx-auto mb-6">
+                        <svg class="w-10 h-10 text-[#218358]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m0 0a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                        </svg>
                     </div>
-                @endforeach
-            </div>
-        @endif
+                    <h3 class="text-xl font-semibold text-gray-900 mb-3">No Applications Yet</h3>
+                    <p class="text-gray-600 mb-6 max-w-md mx-auto">
+                        You haven't submitted any scholarship applications yet. Submit your first application to get started with the screening process.
+                    </p>
+                    <a href="{{ route('requirements.index') }}" class="inline-flex items-center gap-3 px-6 py-3 bg-[#30a46c] hover:bg-[#218358] text-white font-semibold rounded-lg transition-all duration-200">
+                        📝 Submit Application
+                    </a>
+                </div>
+            @else
+                <!-- Status Summary -->
+                <div class="grid grid-cols-2 md:grid-cols-5 gap-4 mb-8">
+                    @php
+                        $statusCounts = [
+                            'pending' => ['count' => $applications->where('status', 'pending')->count(), 'color' => 'bg-amber-100 text-amber-800', 'icon' => '⏳'],
+                            'screening' => ['count' => $applications->where('status', 'screening')->count(), 'color' => 'bg-blue-100 text-blue-800', 'icon' => '🔍'],
+                            'processing' => ['count' => $applications->where('status', 'processing')->count(), 'color' => 'bg-purple-100 text-purple-800', 'icon' => '⚙️'],
+                            'approved' => ['count' => $applications->where('status', 'approved')->count(), 'color' => 'bg-emerald-100 text-emerald-800', 'icon' => '✅'],
+                            'rejected' => ['count' => $applications->where('status', 'rejected')->count(), 'color' => 'bg-red-100 text-red-800', 'icon' => '❌']
+                        ];
+                    @endphp
+                    @foreach($statusCounts as $status => $data)
+                        @if($data['count'] > 0)
+                            <div class="text-center p-4 rounded-lg {{ $data['color'] }} border">
+                                <div class="text-2xl mb-2">{{ $data['icon'] }}</div>
+                                <div class="text-xl font-bold">{{ $data['count'] }}</div>
+                                <div class="text-sm font-medium capitalize">{{ $status }}</div>
+                            </div>
+                        @endif
+                    @endforeach
+                </div>
+
+                <!-- Applications List -->
+                <div class="space-y-4">
+                    @foreach($applications as $app)
+                        @php
+                            $statusConfig = [
+                                'pending' => ['color' => 'border-amber-200 bg-amber-50', 'text' => 'text-amber-800', 'bg' => 'bg-amber-500', 'label' => 'Pending Review'],
+                                'screening' => ['color' => 'border-blue-200 bg-blue-50', 'text' => 'text-blue-800', 'bg' => 'bg-blue-500', 'label' => 'Under Screening'],
+                                'processing' => ['color' => 'border-purple-200 bg-purple-50', 'text' => 'text-purple-800', 'bg' => 'bg-purple-500', 'label' => 'Processing'],
+                                'approved' => ['color' => 'border-emerald-200 bg-emerald-50', 'text' => 'text-emerald-800', 'bg' => 'bg-emerald-500', 'label' => 'Approved'],
+                                'rejected' => ['color' => 'border-red-200 bg-red-50', 'text' => 'text-red-800', 'bg' => 'bg-red-500', 'label' => 'Not Approved']
+                            ][$app->status] ?? ['color' => 'border-gray-200 bg-gray-50', 'text' => 'text-gray-800', 'bg' => 'bg-gray-500', 'label' => 'Unknown'];
+                        @endphp
+
+                        <div class="border-2 {{ $statusConfig['color'] }} rounded-xl p-6 hover:shadow-md transition-all duration-200">
+                            <div class="flex items-start justify-between mb-4">
+                                <div class="flex items-center gap-4">
+                                    <div class="w-12 h-12 {{ $statusConfig['bg'] }} rounded-full flex items-center justify-center text-white text-xl">
+                                        @switch($app->status)
+                                            @case('pending') ⏳ @break
+                                            @case('screening') 🔍 @break
+                                            @case('processing') ⚙️ @break
+                                            @case('approved') 🎉 @break
+                                            @case('rejected') ❌ @break
+                                            @default 📋
+                                        @endswitch
+                                    </div>
+                                    <div>
+                                        <h3 class="font-bold text-lg text-gray-900">Application #{{ $app->id }}</h3>
+                                        <p class="text-sm {{ $statusConfig['text'] }} font-medium">{{ $statusConfig['label'] }}</p>
+                                    </div>
+                                </div>
+                                <div class="text-right text-sm text-gray-500">
+                                    <div>Submitted</div>
+                                    <div class="font-medium">{{ $app->created_at->format('M j, Y') }}</div>
+                                </div>
+                            </div>
+
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div>
+                                    <h4 class="font-semibold text-gray-900 mb-2">Current Status</h4>
+                                    <p class="text-sm text-gray-600">
+                                        @switch($app->status)
+                                            @case('pending')
+                                                Your application has been received and is awaiting initial review.
+                                            @break
+                                            @case('screening')
+                                                Your documents are being carefully reviewed for eligibility.
+                                            @break
+                                            @case('processing')
+                                                Your application is being evaluated by the scholarship committee.
+                                            @break
+                                            @case('approved')
+                                                Congratulations! Your scholarship application has been approved.
+                                            @break
+                                            @case('rejected')
+                                                Your application was not approved for this scholarship cycle.
+                                            @break
+                                            @default
+                                                Status update in progress.
+                                        @endswitch
+                                    </p>
+                                </div>
+                                <div>
+                                    <h4 class="font-semibold text-gray-900 mb-2">Next Steps</h4>
+                                    <p class="text-sm text-gray-600">
+                                        @switch($app->status)
+                                            @case('pending')
+                                                Documents will be reviewed within 3-5 business days.
+                                            @break
+                                            @case('screening')
+                                                You may be contacted if additional information is needed.
+                                            @break
+                                            @case('processing')
+                                                Committee review typically takes 1-2 weeks.
+                                            @break
+                                            @case('approved')
+                                                Award details will be sent to your email within 3-5 days.
+                                            @break
+                                            @case('rejected')
+                                                You can reapply in the next scholarship cycle.
+                                            @break
+                                            @default
+                                                Check back later for status updates.
+                                        @endswitch
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    @endforeach
+                </div>
+            @endif
+        </div>
     </div>
 
     <!-- Announcements Section -->

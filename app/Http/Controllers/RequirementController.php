@@ -36,16 +36,28 @@ class RequirementController extends Controller
             'plan' => 'required|string',
         ]);
 
-        $existingRequirement = Requirement::where('user_id', auth()->id())->first();
-        $isUpdate = $existingRequirement !== null;
+        $user = auth()->user();
+
+        if (empty($user->course)) {
+            return redirect()
+                ->back()
+                ->withErrors(['course' => 'Your course is not set. Please update your profile before submitting an application.'])
+                ->withInput();
+        }
+
+        // Check if Application from this user already exists
+        $application = \App\Models\Application::where('user_id', auth()->id())->first();
+        $isUpdate = $application !== null;
 
         $data = [
+            'course' => $user->course,
             'scholarship_name' => $request->scholarship_name,
             'sponsor' => 'Tomas Claudio Colleges', // Auto-filled
             'year_level' => $request->year_level,
             'gpa' => $request->gpa,
             'plan' => $request->plan,
             'status' => 'pending',
+            'user_id' => auth()->id(),
         ];
 
         // Only update file if a new one is uploaded
@@ -54,15 +66,16 @@ class RequirementController extends Controller
             $data['scholastic_record'] = $filePath;
         }
 
-        Requirement::updateOrCreate(
-            ['user_id' => auth()->id()],
-            $data
-        );
+        if ($isUpdate) {
+            $application->update($data);
+        } else {
+            \App\Models\Application::create($data);
+        }
 
-        $message = $isUpdate ? 'Application updated successfully!' : 'Requirements submitted successfully!';
+        $message = $isUpdate ? 'Application updated successfully!' : 'Application submitted successfully!';
 
         return redirect()
-            ->route('requirements.index')
+            ->route('student.dashboard')
             ->with('success', $message);
     }
 

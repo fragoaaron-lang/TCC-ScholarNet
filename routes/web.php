@@ -74,6 +74,11 @@ Route::middleware(['auth:web', \App\Http\Middleware\CheckApproval::class, 'check
         Route::post('/', [RequirementController::class, 'store'])->name('requirements.store');
         Route::get('/pdf/{id}', [RequirementController::class, 'generatePdf'])->name('requirements.pdf');
     });
+
+    // Student Applications Submission
+    Route::prefix('applications')->group(function () {
+        Route::post('/', [RequirementController::class, 'store'])->name('applications.store');
+    });
 });
 
 /*
