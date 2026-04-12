@@ -3,7 +3,9 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Models\EmailVerification;
 use App\Models\User;
+use App\Notifications\VerifyEmail;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -84,15 +86,18 @@ class RegisteredUserController extends Controller
 
     $user = User::create($userData);
 
-    // Send email verification
-    $user->sendEmailVerificationNotification();
+    // Create email verification record with OTP
+    $emailVerification = EmailVerification::createForUser($user);
+
+    // Send custom OTP email verification
+    $user->notify(new VerifyEmail($emailVerification));
 
     event(new Registered($user));
 
     // Log in the user
     Auth::login($user);
 
-    // Redirect to dashboard with pending approval message
-    return redirect()->route('student.dashboard')->with('status', 'Registration successful! Your account is pending admin approval.');
+    // Redirect to email verification page
+    return redirect()->route('verification.notice')->with('status', 'Registration successful! Please check your email for a verification code.');
 }
 }

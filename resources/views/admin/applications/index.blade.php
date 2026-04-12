@@ -72,7 +72,7 @@
     <div class="max-w-6xl mx-auto space-y-6 md:space-y-8 px-2 md:px-0">
 
         @foreach($groupedApplications as $deptName => $yearGroups)
-        <details open class="bg-white rounded-xl shadow-lg overflow-hidden transition hover:shadow-2xl">
+        <details class="bg-white rounded-xl shadow-lg overflow-hidden transition hover:shadow-2xl">
 
             <summary class="bg-gradient-to-r from-[#218358] to-[#30a46c] px-6 py-4 text-white cursor-pointer list-none">
                 <div class="flex justify-between items-center">

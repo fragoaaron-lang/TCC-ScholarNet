@@ -18,6 +18,11 @@ class GradeController extends Controller
     {
         $admin = Auth::guard('admin')->user();
 
+        // Only allow department secretaries
+        if (!$admin->department) {
+            abort(403, 'Unauthorized access');
+        }
+
         // Get the department (global admin sees all, department secretaries see their department)
         $department = $admin->department;
 
@@ -76,6 +81,13 @@ class GradeController extends Controller
     // Save or update grades
     public function store(Request $request)
     {
+        $admin = Auth::guard('admin')->user();
+
+        // Only allow department secretaries
+        if (!$admin->department) {
+            abort(403, 'Unauthorized access');
+        }
+
         $data = $request->all();
 
         foreach ($data['grades'] as $student_id => $courses) {

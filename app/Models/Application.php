@@ -17,7 +17,13 @@ class Application extends Model
         'sponsor',
         'gpa',
         'plan',
-        'scholastic_record'
+        'scholastic_record',
+        'rejection_reason',
+        'screening_at'
+    ];
+
+    protected $casts = [
+        'screening_at' => 'datetime',
     ];
 
     // Link application to student

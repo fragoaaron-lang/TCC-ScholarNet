@@ -5,10 +5,9 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use App\Models\Requirement;
+use App\Models\Application;
 use App\Models\User;
 use Carbon\Carbon;
-use App\Models\Application;
 
 class AdminApplicationController extends Controller
 {
@@ -16,7 +15,7 @@ class AdminApplicationController extends Controller
     {
         $admin = Auth::guard('admin')->user();
 
-        return Requirement::with('student')
+        return Application::with('student')
             ->when($admin && $admin->department, function ($query) use ($admin) {
                 return $query->whereHas('student', function ($q) use ($admin) {
                     $q->where('course', $admin->department);
@@ -57,7 +56,7 @@ class AdminApplicationController extends Controller
         return view('admin.applications.index', compact('applications', 'departments', 'selectedYear'));
     }
 
-    public function approve(Requirement $application)
+    public function approve(Application $application)
     {
         $admin = Auth::guard('admin')->user();
 
@@ -70,7 +69,7 @@ class AdminApplicationController extends Controller
         return redirect()->route('admin.applications.index')->with('success', 'Application approved.');
     }
 
-    public function reject(Requirement $application, Request $request)
+    public function reject(Application $application, Request $request)
     {
         $admin = Auth::guard('admin')->user();
 
@@ -97,7 +96,7 @@ class AdminApplicationController extends Controller
         return redirect()->route('admin.applications.index')->with('success', 'Application rejected. Student will be terminated.');
     }
 
-    public function screening(Requirement $application)
+    public function screening(Application $application)
     {
         $admin = Auth::guard('admin')->user();
 

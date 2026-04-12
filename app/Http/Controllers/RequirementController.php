@@ -3,16 +3,16 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Models\Requirement;
+use App\Models\Application;
 use Illuminate\Support\Facades\Auth;
 use Barryvdh\DomPDF\Facade\Pdf;
 
 class RequirementController extends Controller
 {
-    // Display the student's requirement
+    // Display the student's requirement/application
     public function index()
     {
-        $requirement = Requirement::where('user_id', auth()->id())->first();
+        $requirement = Application::where('user_id', auth()->id())->first();
         return view('requirements.index', compact('requirement'));
     }
 
@@ -75,17 +75,17 @@ class RequirementController extends Controller
         $message = $isUpdate ? 'Application updated successfully!' : 'Application submitted successfully!';
 
         return redirect()
-            ->route('student.dashboard')
+            ->route('requirements.index')
             ->with('success', $message);
     }
 
-    // Generate PDF of the requirement
-   public function generatePdf($id)
+    // Generate PDF of the application
+    public function generatePdf($id)
     {
-        $requirement = Requirement::with('student')->findOrFail($id);
+        $application = Application::with('student')->findOrFail($id);
 
-        $pdf = PDF::loadView('requirements.pdf', compact('requirement'));
+        $pdf = PDF::loadView('requirements.pdf', ['requirement' => $application]);
 
-        return $pdf->download('Application_Letter_' . $requirement->student->name . '.pdf');
+        return $pdf->download('Application_Letter_' . $application->student->first_name . '.pdf');
     }
 }

@@ -3,6 +3,22 @@
 @section('content')
 <div class="max-w-5xl mx-auto px-4 sm:px-6 space-y-8">
 
+    @if(session('success'))
+        <div id="submissionToast" class="fixed right-6 bottom-6 z-50 hidden max-w-sm rounded-3xl bg-[#218358] px-5 py-4 text-white shadow-2xl ring-1 ring-black/10">
+            <div class="flex items-start gap-3">
+                <div class="mt-0.5 flex h-10 w-10 items-center justify-center rounded-2xl bg-white/10 text-white">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                    </svg>
+                </div>
+                <div>
+                    <p class="font-semibold">Application Submitted</p>
+                    <p class="text-sm text-white/80">Your response has been received and saved successfully.</p>
+                </div>
+            </div>
+        </div>
+    @endif
+
     <!-- Page Header -->
     <div class="bg-gradient-to-r from-[#218358] to-[#30a46c] rounded-2xl p-8 text-white shadow-lg">
         <h1 class="text-3xl md:text-4xl font-bold mb-2">📝 Scholarship Application</h1>
@@ -151,5 +167,19 @@
         </div>
     </div>
 
+    @if(session('success'))
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                const toast = document.getElementById('submissionToast');
+                if (!toast) return;
+
+                toast.classList.remove('hidden');
+                setTimeout(() => {
+                    toast.classList.add('opacity-0', 'transition', 'duration-500');
+                    setTimeout(() => toast.remove(), 500);
+                }, 4500);
+            });
+        </script>
+    @endif
 </div>
 @endsection

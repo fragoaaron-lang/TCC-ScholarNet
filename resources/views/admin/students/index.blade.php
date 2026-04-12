@@ -21,22 +21,22 @@
     }
 @endphp
 
-<div class="min-h-screen bg-slate-50">
+<div class="min-h-screen bg-gradient-to-br from-[#c4e8d1]/20 to-[#8eceaa]/10">
 
     <!-- Header Section -->
-    <div class="bg-white border-b border-slate-200 shadow-sm">
+    <div class="bg-gradient-to-r from-[#218358] to-[#30a46c] border-b border-[#c4e8d1]/30 shadow-lg rounded-t-2xl overflow-hidden">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
             <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between">
                 <div class="mb-4 lg:mb-0">
-                    <h1 class="text-3xl font-bold text-slate-900">Student Management</h1>
-                    <p class="mt-1 text-sm text-slate-600">
+                    <h1 class="text-3xl font-bold text-white">Student Management</h1>
+                    <p class="mt-1 text-sm text-white/90">
                         {{ $titleDepartment }} Department • {{ $selectedYear !== 'all' ? $selectedYear : 'All Academic Years' }}
                     </p>
                 </div>
                 <div class="flex items-center space-x-4">
-                    <div class="bg-slate-100 px-4 py-2 rounded-lg">
-                        <span class="text-sm font-medium text-slate-700">Total Students:</span>
-                        <span class="ml-2 text-lg font-bold text-slate-900">{{ $students->count() }}</span>
+                    <div class="bg-white/10 px-4 py-2 rounded-lg backdrop-blur-sm">
+                        <span class="text-sm font-medium text-white">Total Students:</span>
+                        <span class="ml-2 text-lg font-bold text-white">{{ $students->count() }}</span>
                     </div>
                 </div>
             </div>
@@ -46,9 +46,9 @@
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
 
     <!-- Filters Section -->
-    <div class="bg-white rounded-lg border border-slate-200 shadow-sm mb-8">
-        <div class="px-6 py-4 border-b border-slate-200">
-            <h3 class="text-lg font-semibold text-slate-900">Academic Filters</h3>
+    <div class="bg-white rounded-lg border border-[#c4e8d1]/30 shadow-md mb-8">
+        <div class="px-6 py-4 border-b border-[#c4e8d1]/30">
+            <h3 class="text-lg font-semibold text-[#218358]">Academic Filters</h3>
         </div>
         <div class="px-6 py-4">
             <form method="GET" class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
@@ -56,9 +56,9 @@
                     <input type="hidden" name="department" value="{{ $department }}">
                 @endif
                 <div class="flex items-center space-x-3">
-                    <label for="year_level" class="text-sm font-medium text-slate-700">Academic Year:</label>
+                    <label for="year_level" class="text-sm font-medium text-[#218358]">Academic Year:</label>
                     <select name="year_level" id="year_level" onchange="this.form.submit()"
-                            class="px-4 py-2 border border-slate-300 rounded-md text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white shadow-sm">
+                            class="px-4 py-2 border border-[#c4e8d1] rounded-md text-sm focus:ring-2 focus:ring-[#30a46c] focus:border-[#30a46c] bg-white shadow-sm">
                         <option value="all" {{ $selectedYear === 'all' ? 'selected' : '' }}>All Years</option>
                         <option value="1st Year" {{ $selectedYear === '1st Year' ? 'selected' : '' }}>1st Year</option>
                         <option value="2nd Year" {{ $selectedYear === '2nd Year' ? 'selected' : '' }}>2nd Year</option>
@@ -66,7 +66,7 @@
                         <option value="4th Year" {{ $selectedYear === '4th Year' ? 'selected' : '' }}>4th Year</option>
                     </select>
                 </div>
-                <div class="text-sm text-slate-500">
+                <div class="text-sm text-[#218358]">
                     Filter students by their current academic year
                 </div>
             </form>
@@ -76,16 +76,16 @@
     @if($students->isEmpty())
 
     <!-- Empty State -->
-    <div class="bg-white rounded-lg border border-slate-200 shadow-sm">
+    <div class="bg-white rounded-lg border border-[#c4e8d1]/30 shadow-md">
         <div class="px-6 py-12 text-center">
-            <div class="mx-auto w-24 h-24 bg-slate-100 rounded-full flex items-center justify-center mb-4">
-                <svg class="w-12 h-12 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div class="mx-auto w-24 h-24 bg-[#c4e8d1]/50 rounded-full flex items-center justify-center mb-4">
+                <svg class="w-12 h-12 text-[#218358]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                         d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"/>
                 </svg>
             </div>
-            <h3 class="text-lg font-medium text-slate-900 mb-2">No Students Found</h3>
-            <p class="text-slate-500 max-w-md mx-auto">
+            <h3 class="text-lg font-medium text-[#218358] mb-2">No Students Found</h3>
+            <p class="text-[#218358]/70 max-w-md mx-auto">
                 There are currently no students matching your selected criteria. Try adjusting your filters or check back later.
             </p>
         </div>
@@ -97,22 +97,22 @@
     <div class="space-y-6">
 
         @foreach($groupedStudents as $deptName => $yearGroups)
-        <div class="bg-white rounded-lg border border-slate-200 shadow-sm overflow-hidden">
-            <div class="bg-slate-50 border-b border-slate-200 px-6 py-4">
-                <div class="flex items-center justify-between">
-                    <div>
-                        <h2 class="text-xl font-semibold text-slate-900">{{ $deptName }} Department</h2>
-                        <p class="text-sm text-slate-600 mt-1">
-                            {{ $yearGroups->flatten()->count() }} enrolled students
-                        </p>
-                    </div>
-                    <div class="flex items-center space-x-2">
-                        <svg class="w-5 h-5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <details class="bg-white rounded-lg border border-[#c4e8d1]/30 shadow-md overflow-hidden [&>summary::-webkit-details-marker]:hidden [&>summary]:list-none">
+            <summary class="bg-gradient-to-r from-[#218358] to-[#30a46c] border-b border-[#c4e8d1]/30 px-6 py-4 cursor-pointer hover:from-[#30a46c] hover:to-[#218358] transition-all duration-200 text-white list-none">
+                <div class="flex items-center">
+                    <div class="flex items-center space-x-2 mr-4">
+                        <svg class="w-5 h-5 text-white transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
                         </svg>
                     </div>
+                    <div>
+                        <h2 class="text-xl font-semibold">{{ $deptName }} Department</h2>
+                        <p class="text-sm text-white/80 mt-1">
+                            {{ $yearGroups->flatten()->count() }} enrolled students
+                        </p>
+                    </div>
                 </div>
-            </div>
+            </summary>
 
             <div class="p-6">
                 @php $deptStudents = $yearGroups->flatten(); @endphp
@@ -285,17 +285,17 @@
                 </div>
                 @endif
             </div>
-        </div>
+        </details>
         @endforeach
 
     </div>
 
     @elseif($students->isNotEmpty())
         <!-- Student Directory -->
-        <div class="bg-white rounded-lg border border-slate-200 shadow-sm overflow-hidden">
-            <div class="bg-slate-50 border-b border-slate-200 px-6 py-4">
-                <h3 class="text-lg font-semibold text-slate-900">Student Directory</h3>
-                <p class="text-sm text-slate-600 mt-1">{{ $titleDepartment }} Department</p>
+        <div class="bg-white rounded-lg border border-[#c4e8d1]/30 shadow-md overflow-hidden">
+            <div class="bg-gradient-to-r from-[#30a46c] to-[#8eceaa] px-6 py-4 text-white">
+                <h3 class="text-lg font-semibold">Student Directory</h3>
+                <p class="text-sm text-white/80 mt-1">{{ $titleDepartment }} Department</p>
             </div>
 
             <!-- Mobile Card View -->
@@ -376,20 +376,20 @@
             <!-- Desktop Table View -->
             <div class="hidden md:block overflow-x-auto">
                 <table class="w-full">
-                    <thead class="bg-slate-100 border-b border-slate-200">
+                    <thead class="bg-[#c4e8d1]/50 border-b border-[#c4e8d1]/30">
                         <tr>
-                            <th class="px-6 py-4 text-left text-xs font-semibold text-slate-700 uppercase tracking-wider">Student ID</th>
-                            <th class="px-6 py-4 text-left text-xs font-semibold text-slate-700 uppercase tracking-wider">Full Name</th>
-                            <th class="px-6 py-4 text-left text-xs font-semibold text-slate-700 uppercase tracking-wider">Program</th>
-                            <th class="px-6 py-4 text-left text-xs font-semibold text-slate-700 uppercase tracking-wider">Year Level</th>
-                            <th class="px-6 py-4 text-left text-xs font-semibold text-slate-700 uppercase tracking-wider">Email Address</th>
-                            <th class="px-6 py-4 text-left text-xs font-semibold text-slate-700 uppercase tracking-wider">Status</th>
-                            <th class="px-6 py-4 text-left text-xs font-semibold text-slate-700 uppercase tracking-wider">Actions</th>
+                            <th class="px-6 py-4 text-left text-xs font-semibold text-[#218358] uppercase tracking-wider">Student ID</th>
+                            <th class="px-6 py-4 text-left text-xs font-semibold text-[#218358] uppercase tracking-wider">Full Name</th>
+                            <th class="px-6 py-4 text-left text-xs font-semibold text-[#218358] uppercase tracking-wider">Program</th>
+                            <th class="px-6 py-4 text-left text-xs font-semibold text-[#218358] uppercase tracking-wider">Year Level</th>
+                            <th class="px-6 py-4 text-left text-xs font-semibold text-[#218358] uppercase tracking-wider">Email Address</th>
+                            <th class="px-6 py-4 text-left text-xs font-semibold text-[#218358] uppercase tracking-wider">Status</th>
+                            <th class="px-6 py-4 text-left text-xs font-semibold text-[#218358] uppercase tracking-wider">Actions</th>
                         </tr>
                     </thead>
-                    <tbody class="bg-white divide-y divide-slate-200">
+                    <tbody class="bg-white divide-y divide-[#c4e8d1]/30">
                         @foreach($students as $student)
-                        <tr class="hover:bg-slate-50 transition duration-150">
+                        <tr class="hover:bg-[#c4e8d1]/10 transition duration-150">
                             <td class="px-6 py-4 whitespace-nowrap">
                                 <span class="text-sm font-mono font-semibold text-blue-600">{{ $student->student_number ?? 'N/A' }}</span>
                             </td>
@@ -465,18 +465,18 @@
 <div id="rejectModal"
      class="fixed inset-0 bg-black/60 hidden items-center justify-center z-50 p-4">
 
-    <div class="w-full max-w-md bg-white rounded-lg border border-slate-200 shadow-xl overflow-hidden">
+    <div class="w-full max-w-md bg-white rounded-lg border border-[#c4e8d1]/30 shadow-xl overflow-hidden">
 
         <!-- Header -->
-        <div class="bg-red-50 border-b border-red-200 px-6 py-4">
+        <div class="bg-gradient-to-r from-[#30a46c] to-[#8eceaa] border-b border-[#c4e8d1]/30 px-6 py-4">
             <div class="flex items-center">
                 <div class="flex-shrink-0">
-                    <svg class="w-6 h-6 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z"/>
                     </svg>
                 </div>
                 <div class="ml-3">
-                    <h3 class="text-lg font-semibold text-slate-900">Reject Student Application</h3>
+                    <h3 class="text-lg font-semibold text-white">Reject Student Application</h3>
                 </div>
             </div>
         </div>

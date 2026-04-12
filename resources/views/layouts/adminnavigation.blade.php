@@ -15,7 +15,7 @@
     $links = $role === 'admin'
         ? [
             ['name' => 'Dashboard', 'route' => 'admin.dashboard', 'active' => 'admin.dashboard'],
-            ['name' => 'Grade Encoder', 'route' => 'admin.grades.index', 'active' => 'admin.grades.*'],
+            ...($user->department ? [['name' => 'Grade Encoder', 'route' => 'admin.grades.index', 'active' => 'admin.grades.*']] : []),
             ['name' => 'Announcements', 'route' => 'admin.announcements.index', 'active' => 'admin.announcements.*'],
             ['name' => 'Applicants', 'route' => 'admin.applications.index', 'active' => 'admin.applications.*'],
             ['name' => 'Students', 'route' => 'admin.students.index', 'active' => 'admin.students.*'],

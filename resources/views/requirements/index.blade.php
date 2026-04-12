@@ -28,6 +28,20 @@
                     {{ session('success') }}
                 </div>
             </div>
+
+            <div id="submissionToast" class="fixed right-6 bottom-6 z-50 hidden max-w-sm rounded-3xl bg-[#218358] px-5 py-4 text-white shadow-2xl ring-1 ring-black/10">
+                <div class="flex items-start gap-3">
+                    <div class="mt-0.5 flex h-10 w-10 items-center justify-center rounded-2xl bg-white/10 text-white">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                        </svg>
+                    </div>
+                    <div>
+                        <p class="font-semibold">Application Submitted</p>
+                        <p class="text-sm text-white/80">Your scholarship response has been recorded. You may review it here.</p>
+                    </div>
+                </div>
+            </div>
         @endif
 
         {{-- APPLICATION STATUS --}}
@@ -118,67 +132,80 @@
             <div class="bg-gradient-to-r from-[#30a46c] to-[#8eceaa] px-6 py-4">
                 <h2 class="text-xl font-bold text-white">
                     @if($requirement)
-                        Edit Your Application
+                        Submitted Application
                     @else
                         Application Form
                     @endif
                 </h2>
                 <p class="text-white/90 text-sm mt-1">
                     @if($requirement)
-                        Update your scholarship application details
+                        View your submitted scholarship application details below.
                     @else
-                        Please fill out all required fields below
+                        Please fill out all required fields below.
                     @endif
                 </p>
             </div>
 
-            <form action="{{ route('requirements.store') }}"
-                  method="POST"
-                  enctype="multipart/form-data"
-                  class="p-6 space-y-6">
-                @csrf
+            @if($requirement)
+                <div class="bg-white rounded-2xl shadow-lg overflow-hidden border border-[#c4e8d1]/30">
+                    <div class="p-6 space-y-6">
+                        <div class="grid grid-cols-1 gap-6 lg:grid-cols-2">
+                            <div class="space-y-3">
+                                <p class="text-sm text-gray-500 uppercase tracking-[0.18em] font-semibold">Scholarship Name</p>
+                                <div class="rounded-xl border border-[#c4e8d1] bg-white p-4 text-gray-900">{{ $requirement->scholarship_name }}</div>
+                            </div>
+                            <div class="space-y-3">
+                                <p class="text-sm text-gray-500 uppercase tracking-[0.18em] font-semibold">Year Level</p>
+                                <div class="rounded-xl border border-[#c4e8d1] bg-white p-4 text-gray-900">{{ $requirement->year_level }}</div>
+                            </div>
+                            <div class="space-y-3">
+                                <p class="text-sm text-gray-500 uppercase tracking-[0.18em] font-semibold">Sponsor</p>
+                                <div class="rounded-xl border border-[#c4e8d1] bg-white p-4 text-gray-900">{{ $requirement->sponsor }}</div>
+                            </div>
+                            <div class="space-y-3">
+                                <p class="text-sm text-gray-500 uppercase tracking-[0.18em] font-semibold">GPA</p>
+                                <div class="rounded-xl border border-[#c4e8d1] bg-white p-4 text-gray-900">{{ number_format($requirement->gpa, 2) }}</div>
+                            </div>
+                        </div>
 
-                <!-- Scholastic Record Upload -->
-                <div class="space-y-2">
-                    <label class="block text-sm font-bold text-[#218358]">
-                        <div class="flex items-center gap-2">
-                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
-                            </svg>
-                            Upload Scholastic Record <span class="text-red-500">*</span>
+                        <div class="space-y-3">
+                            <p class="text-sm text-gray-500 uppercase tracking-[0.18em] font-semibold">Scholarship Plan</p>
+                            <div class="rounded-2xl border border-[#c4e8d1] bg-white p-6 text-gray-900 whitespace-pre-line">{{ $requirement->plan }}</div>
                         </div>
-                    </label>
-                    @if($requirement && $requirement->scholastic_record)
-                        <div class="flex items-center space-x-4 p-4 bg-[#30a46c]/10 border border-[#30a46c] rounded-lg">
-                            <svg class="w-8 h-8 text-[#30a46c]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                            </svg>
-                            <div>
-                                <p class="text-sm font-medium text-[#218358]">File already uploaded</p>
-                                <p class="text-xs text-[#30a46c]">{{ basename($requirement->scholastic_record) }}</p>
+
+                        @if($requirement->scholastic_record)
+                            <div class="space-y-3">
+                                <p class="text-sm text-gray-500 uppercase tracking-[0.18em] font-semibold">Uploaded Scholastic Record</p>
+                                <div class="flex flex-wrap items-center gap-3 rounded-xl border border-[#c4e8d1] bg-white p-4">
+                                    <span class="inline-flex items-center gap-2 rounded-full bg-[#e6f7ee] px-3 py-2 text-sm font-medium text-[#218358]">
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
+                                        </svg>
+                                        File uploaded
+                                    </span>
+                                    <a href="{{ asset('storage/' . $requirement->scholastic_record) }}" target="_blank" class="text-[#218358] hover:text-[#1e6d47] font-semibold">View document</a>
+                                </div>
                             </div>
-                            <a href="{{ asset('storage/' . $requirement->scholastic_record) }}" target="_blank" class="text-[#30a46c] hover:text-[#218358] text-sm font-medium">
-                                View File
-                            </a>
-                        </div>
-                        <div class="mt-2">
-                            <label class="block text-xs text-gray-600 mb-2 font-medium">Upload new file to replace (optional)</label>
-                            <div id="dropzone-edit" class="border-2 border-dashed border-[#c4e8d1] rounded-lg p-4 text-center hover:border-[#30a46c] transition-colors bg-[#fbfefc] cursor-pointer">
-                                <input type="file"
-                                       name="scholastic_record"
-                                       accept=".pdf,.jpg,.jpeg,.png"
-                                       class="hidden"
-                                       id="scholastic_record">
-                                <label for="scholastic_record" class="cursor-pointer block">
-                                    <svg class="w-8 h-8 mx-auto text-[#8eceaa] mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path>
-                                    </svg>
-                                    <p class="text-[#218358] text-sm font-medium">Click to upload or paste image (Ctrl+V)</p>
-                                    <p class="text-xs text-gray-500">PDF, JPG, PNG (Max: 10MB)</p>
-                                </label>
+                        @endif
+                    </div>
+                </div>
+            @else
+                <form action="{{ route('requirements.store') }}"
+                      method="POST"
+                      enctype="multipart/form-data"
+                      class="p-6 space-y-6">
+                    @csrf
+
+                    <!-- Scholastic Record Upload -->
+                    <div class="space-y-2">
+                        <label class="block text-sm font-bold text-[#218358]">
+                            <div class="flex items-center gap-2">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                                </svg>
+                                Upload Scholastic Record <span class="text-red-500">*</span>
                             </div>
-                        </div>
-                    @else
+                        </label>
                         <div id="dropzone" class="border-2 border-dashed border-[#c4e8d1] rounded-lg p-6 text-center hover:border-[#30a46c] transition-colors bg-[#fbfefc] cursor-pointer">
                             <input type="file"
                                    name="scholastic_record"
@@ -194,107 +221,106 @@
                                 <p class="text-sm text-gray-500 mt-1">PDF, JPG, PNG (Max: 10MB)</p>
                             </label>
                         </div>
-                    @endif
-                </div>
-
-                <!-- Scholarship Name -->
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div class="space-y-2">
-                        <label class="block text-sm font-semibold text-[#218358]">
-                            Scholarship Name
-                            <span class="text-red-500">*</span>
-                        </label>
-                        <select name="scholarship_name"
-                                class="w-full px-4 py-3 border border-[#c4e8d1] rounded-lg focus:ring-2 focus:ring-[#30a46c] focus:border-[#30a46c] transition-colors"
-                                required>
-                            <option value="">-- Select Scholarship --</option>
-                            <option value="Academic Scholar" {{ ($requirement && $requirement->scholarship_name == 'Academic Scholar') ? 'selected' : '' }}>Academic Scholar</option>
-                            <option value="Athletics Scholar" {{ ($requirement && $requirement->scholarship_name == 'Athletics Scholar') ? 'selected' : '' }}>Athletics Scholar</option>
-                            <option value="Marching Band Scholar" {{ ($requirement && $requirement->scholarship_name == 'Marching Band Scholar') ? 'selected' : '' }}>Marching Band Scholar</option>
-                        </select>
                     </div>
 
-                    <!-- Year Level -->
+                    <!-- Scholarship Name -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div class="space-y-2">
+                            <label class="block text-sm font-semibold text-[#218358]">
+                                Scholarship Name
+                                <span class="text-red-500">*</span>
+                            </label>
+                            <select name="scholarship_name"
+                                    class="w-full px-4 py-3 border border-[#c4e8d1] rounded-lg focus:ring-2 focus:ring-[#30a46c] focus:border-[#30a46c] transition-colors"
+                                    required>
+                                <option value="">-- Select Scholarship --</option>
+                                <option value="Academic Scholar">Academic Scholar</option>
+                                <option value="Athletics Scholar">Athletics Scholar</option>
+                                <option value="Marching Band Scholar">Marching Band Scholar</option>
+                            </select>
+                        </div>
+
+                        <!-- Year Level -->
+                        <div class="space-y-2">
+                            <label class="block text-sm font-semibold text-[#218358]">
+                                Year Level
+                                <span class="text-red-500">*</span>
+                            </label>
+                            <select name="year_level"
+                                    class="w-full px-4 py-3 border border-[#c4e8d1] rounded-lg focus:ring-2 focus:ring-[#30a46c] focus:border-[#30a46c] transition-colors"
+                                    required>
+                                <option value="">-- Select Year Level --</option>
+                                <option value="1st Year">1st Year</option>
+                                <option value="2nd Year">2nd Year</option>
+                                <option value="3rd Year">3rd Year</option>
+                                <option value="4th Year">4th Year</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- GPA -->
                     <div class="space-y-2">
                         <label class="block text-sm font-semibold text-[#218358]">
-                            Year Level
+                            GPA (1.0 - 5.0)
                             <span class="text-red-500">*</span>
                         </label>
-                        <select name="year_level"
-                                class="w-full px-4 py-3 border border-[#c4e8d1] rounded-lg focus:ring-2 focus:ring-[#30a46c] focus:border-[#30a46c] transition-colors"
-                                required>
-                            <option value="">-- Select Year Level --</option>
-                            <option value="1st Year" {{ ($requirement && $requirement->year_level == '1st Year') ? 'selected' : '' }}>1st Year</option>
-                            <option value="2nd Year" {{ ($requirement && $requirement->year_level == '2nd Year') ? 'selected' : '' }}>2nd Year</option>
-                            <option value="3rd Year" {{ ($requirement && $requirement->year_level == '3rd Year') ? 'selected' : '' }}>3rd Year</option>
-                            <option value="4th Year" {{ ($requirement && $requirement->year_level == '4th Year') ? 'selected' : '' }}>4th Year</option>
-                        </select>
+                        <input type="number"
+                               id="gpa"
+                               name="gpa"
+                               min="1.0"
+                               max="5.0"
+                               step="0.01"
+                               placeholder="Example: 1.75"
+                               class="w-full px-4 py-3 border border-[#c4e8d1] rounded-lg focus:ring-2 focus:ring-[#30a46c] focus:border-[#30a46c] transition-colors"
+                               required>
+                        <p class="text-xs text-gray-500 mt-1">
+                            Enter your GPA from your scholastic record (between 1.0 and 5.0).
+                        </p>
                     </div>
-                </div>
 
-                <!-- GPA -->
-                <div class="space-y-2">
-                    <label class="block text-sm font-semibold text-[#218358]">
-                        GPA (1.0 - 5.0)
-                        <span class="text-red-500">*</span>
-                    </label>
-                    <input type="number"
-                           id="gpa"
-                           name="gpa"
-                           min="1.0"
-                           max="5.0"
-                           step="0.01"
-                           placeholder="Example: 1.75"
-                           value="{{ $requirement ? $requirement->gpa : '' }}"
-                           class="w-full px-4 py-3 border border-[#c4e8d1] rounded-lg focus:ring-2 focus:ring-[#30a46c] focus:border-[#30a46c] transition-colors"
-                           required>
-                    <p class="text-xs text-gray-500 mt-1">
-                        Enter your GPA from your scholastic record (between 1.0 and 5.0).
-                    </p>
-                </div>
+                    <!-- Plan Textarea -->
+                    <div class="space-y-2">
+                        <label class="block text-sm font-semibold text-[#218358]">
+                            Your Plan with Scholarship
+                            <span class="text-red-500">*</span>
+                        </label>
+                        <textarea name="plan"
+                                  rows="8"
+                                  class="w-full px-4 py-3 border border-[#c4e8d1] rounded-lg focus:ring-2 focus:ring-[#30a46c] focus:border-[#30a46c] transition-colors resize-vertical"
+                                  placeholder="Explain how this scholarship will help you and your academic goals..."
+                                  required></textarea>
+                        <p class="text-xs text-gray-500 mt-1">
+                            Please explain how this scholarship will help you and your academic goals.
+                        </p>
+                    </div>
 
-                <!-- Plan Textarea -->
-                <div class="space-y-2">
-                    <label class="block text-sm font-semibold text-[#218358]">
-                        Your Plan with Scholarship
-                        <span class="text-red-500">*</span>
-                    </label>
-                    <textarea name="plan"
-                              rows="8"
-                              class="w-full px-4 py-3 border border-[#c4e8d1] rounded-lg focus:ring-2 focus:ring-[#30a46c] focus:border-[#30a46c] transition-colors resize-vertical"
-                              placeholder="Explain how this scholarship will help you and your academic goals..."
-                              required>{{ $requirement ? $requirement->plan : '' }}</textarea>
-                    <p class="text-xs text-gray-500 mt-1">
-                        Please explain how this scholarship will help you and your academic goals.
-                    </p>
-                </div>
-
-                <!-- Submit Button -->
-                <div class="pt-4">
-                    @if($isPastDeadline)
-                        <button type="button"
-                                disabled
-                                class="w-full bg-gray-400 text-gray-600 px-6 py-4 rounded-lg shadow-lg font-semibold text-lg cursor-not-allowed">
-                            <span class="flex items-center justify-center">
-                                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path>
-                                </svg>
-                                Submission Deadline Passed
-                            </span>
-                        </button>
-                    @else
-                        <button type="submit"
-                                class="w-full bg-gradient-to-r from-[#30a46c] to-[#218358] hover:from-[#218358] hover:to-[#0a8335] text-white px-6 py-4 rounded-lg shadow-lg transition-all duration-200 font-semibold text-lg transform hover:scale-[1.02]">
-                            <span class="flex items-center justify-center">
-                                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M{{ $requirement ? '11 5l-11 11 11-11' : '12 19l9 2-9-18-9 18 9-2zm0 0v-8' }}"></path>
-                                </svg>
-                                {{ $requirement ? 'Update Application' : 'Submit Requirements' }}
-                            </span>
-                        </button>
-                    @endif
-                </div>
-            </form>
+                    <!-- Submit Button -->
+                    <div class="pt-4">
+                        @if($isPastDeadline)
+                            <button type="button"
+                                    disabled
+                                    class="w-full bg-gray-400 text-gray-600 px-6 py-4 rounded-lg shadow-lg font-semibold text-lg cursor-not-allowed">
+                                <span class="flex items-center justify-center">
+                                    <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path>
+                                    </svg>
+                                    Submission Deadline Passed
+                                </span>
+                            </button>
+                        @else
+                            <button type="submit"
+                                    class="w-full bg-gradient-to-r from-[#30a46c] to-[#218358] hover:from-[#218358] hover:to-[#0a8335] text-white px-6 py-4 rounded-lg shadow-lg transition-all duration-200 font-semibold text-lg transform hover:scale-[1.02]">
+                                <span class="flex items-center justify-center">
+                                    <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path>
+                                    </svg>
+                                    Submit Requirements
+                                </span>
+                            </button>
+                        @endif
+                    </div>
+                </form>
+            @endif
         </div>
 
         {{-- DOWNLOAD PDF BUTTON --}}
@@ -410,6 +436,15 @@ document.addEventListener('DOMContentLoaded', function() {
         `;
         document.body.appendChild(msg);
         setTimeout(() => msg.remove(), 3000);
+    }
+
+    const submissionToast = document.getElementById('submissionToast');
+    if (submissionToast) {
+        submissionToast.classList.remove('hidden');
+        setTimeout(() => {
+            submissionToast.classList.add('opacity-0', 'transition', 'duration-500');
+            setTimeout(() => submissionToast.remove(), 500);
+        }, 4500);
     }
 });
 </script>

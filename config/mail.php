@@ -115,4 +115,16 @@ return [
         'name' => env('MAIL_FROM_NAME', 'Example'),
     ],
 
+    /*
+    |--------------------------------------------------------------------------
+    | President/Board of Directors Email
+    |--------------------------------------------------------------------------
+    |
+    | Email address for sending scholarship approval letters to the
+    | president or board of directors.
+    |
+    */
+
+    'president_email' => env('MAIL_PRESIDENT_EMAIL', 'fragoaaron@gmail.com'),
+
 ];
