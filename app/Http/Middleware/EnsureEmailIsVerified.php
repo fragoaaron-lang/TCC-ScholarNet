@@ -20,8 +20,12 @@ class EnsureEmailIsVerified
             return redirect()->route('login');
         }
 
-        if (!Auth::user()->hasVerifiedEmail()) {
-            return redirect()->route('verification.notice');
+        // Check if user needs email verification (either initial or re-verification)
+        if (Auth::user()->needsEmailReVerification()) {
+            // Send verification email and redirect to verification notice
+            Auth::user()->sendEmailVerificationNotification();
+            return redirect()->route('verification.notice')
+                ->with('info', 'Please verify your email address to continue.');
         }
 
         return $next($request);

@@ -27,10 +27,7 @@ class EmailVerificationController extends Controller
     {
         $user = Auth::user();
 
-        if ($user->hasVerifiedEmail()) {
-            return redirect()->intended(route('student.dashboard', absolute: false));
-        }
-
+        // Allow resending even if already verified (for re-verification)
         $user->sendEmailVerificationNotification();
 
         return back()->with('resent', 'A new verification code has been sent to your email address.');
@@ -47,10 +44,6 @@ class EmailVerificationController extends Controller
 
         $user = Auth::user();
 
-        if ($user->hasVerifiedEmail()) {
-            return redirect()->intended(route('student.dashboard', absolute: false));
-        }
-
         $verification = EmailVerification::where('user_id', $user->id)
             ->where('token', $request->token)
             ->whereNull('verified_at')
@@ -63,7 +56,7 @@ class EmailVerificationController extends Controller
         // Mark verification as used
         $verification->update(['verified_at' => now()]);
 
-        // Mark user email as verified
+        // Mark user email as verified (this also updates last_email_verified_at)
         $user->markEmailAsVerified();
 
         return redirect()->intended(route('student.dashboard', absolute: false))
