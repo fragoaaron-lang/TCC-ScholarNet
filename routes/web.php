@@ -12,7 +12,6 @@ use App\Http\Controllers\RequirementController;
 use App\Http\Controllers\Admin\AdminApplicationController;
 use App\Http\Controllers\Admin\AnnouncementController;
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
-use App\Http\Controllers\EmailVerificationController;
 
 /*
 |--------------------------------------------------------------------------
@@ -49,21 +48,10 @@ Route::get('/dashboard', function () {
 
 /*
 |--------------------------------------------------------------------------
-| Email Verification Routes
-|--------------------------------------------------------------------------
-*/
-Route::middleware('auth:web')->group(function () {
-    Route::get('/email/verify', [EmailVerificationController::class, 'show'])->name('verification.notice');
-    Route::post('/email/verification-notification', [EmailVerificationController::class, 'resend'])->name('verification.send');
-    Route::post('/email/verify', [EmailVerificationController::class, 'verify'])->name('verification.verify');
-});
-
-/*
-|--------------------------------------------------------------------------
 | Student Routes (web guard)
 |--------------------------------------------------------------------------
 */
-Route::middleware(['auth:web', 'verified', \App\Http\Middleware\CheckApproval::class, 'check.termination'])->group(function () {
+Route::middleware(['auth:web', \App\Http\Middleware\CheckApproval::class, 'check.termination'])->group(function () {
 
     // Dashboard
     Route::get('/student/dashboard', [StudentDashboardController::class, 'index'])
