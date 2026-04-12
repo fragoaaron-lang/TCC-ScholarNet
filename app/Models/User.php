@@ -14,7 +14,6 @@ class User extends Authenticatable implements MustVerifyEmail
     protected $fillable = [
         'email',
         'email_verified_at',
-        'last_email_verified_at',
         'password',
         'role', // 'student', 'admin', etc.
         'is_approved',
@@ -33,9 +32,7 @@ class User extends Authenticatable implements MustVerifyEmail
         'remember_token',
     ];
 protected $dates = [
-    'termination_at',
-    'email_verified_at',
-    'last_email_verified_at'
+    'termination_at'
 ];
     // A student may have many applications
  public function requirements()
@@ -71,30 +68,7 @@ public function applications()
     {
         return $this->forceFill([
             'email_verified_at' => $this->freshTimestamp(),
-            'last_email_verified_at' => $this->freshTimestamp(),
         ])->save();
-    }
-
-    /**
-     * Check if email verification has expired (requires re-verification every 30 days).
-     * Returns true if re-verification is needed.
-     */
-    public function needsEmailReVerification(): bool
-    {
-        // If email is not verified yet, they need verification
-        if (!$this->hasVerifiedEmail()) {
-            return true;
-        }
-
-        // If last_email_verified_at is null, require verification
-        if (is_null($this->last_email_verified_at)) {
-            return true;
-        }
-
-        // Require re-verification every 30 days
-        $requiresReVerification = $this->last_email_verified_at->addDays(30)->isPast();
-        
-        return $requiresReVerification;
     }
 
     /**
